@@ -37,4 +37,21 @@ public class Card {
     public boolean isWild() {
         return color == Color.SPECIAL;
     }
+
+    public boolean isPlayableOn(Card topCard) {
+        // Caso 1: stesso colore
+        if (this.color.equals(topCard.color)) {
+            return true;
+        }
+    
+        // Caso 2: stesso valore
+        if (this.number == topCard.number) {
+            return true;
+        }
+    
+        // Caso 3: carta jolly
+      
+        // Altrimenti, non giocabile
+        return false;
+    }
 }
