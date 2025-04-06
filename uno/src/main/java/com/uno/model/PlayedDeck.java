@@ -2,11 +2,11 @@ package com.uno.model;
 
 import java.util.*;
 
-public class DiscardPile {
+public class PlayedDeck {
     private Stack<Card> pile;
 
     // Costruttore della pila degli scarti
-    public DiscardPile() {
+    public PlayedDeck() {
         pile = new Stack<>();
     }
 
@@ -15,8 +15,8 @@ public class DiscardPile {
         pile.push(card);
     }
 
-    // Metodo per controllare la crata in cima
-    public Card topCard() {
+    // Metodo per controllare l'ultima carta giocata
+    public Card getLastCard() {
         if (pile.isEmpty()) {
             throw new IllegalStateException("La pila degli scarti è vuota.");
         }
