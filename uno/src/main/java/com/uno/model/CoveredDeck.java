@@ -1,11 +1,11 @@
 package com.uno.model;
 import java.util.*;
 
-public class Deck {
+public class CoveredDeck {
     private Stack<Card> cards;
 
     // Costruttore del mazzo
-    public Deck() {
+    public CoveredDeck() {
         cards = new Stack<>();
         generateDeck();
         shuffle();
