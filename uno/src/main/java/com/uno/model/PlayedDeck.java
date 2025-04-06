@@ -16,7 +16,7 @@ public class PlayedDeck {
     }
 
     // Metodo per controllare l'ultima carta giocata
-    public Card topCard() {
+    public Card getLastCard() {
         if (pile.isEmpty()) {
             throw new IllegalStateException("La pila degli scarti è vuota.");
         }
