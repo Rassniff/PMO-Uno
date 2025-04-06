@@ -3,12 +3,12 @@ package com.uno.model;
 import java.util.*;
 
 public class Game {
-    private List<Player> players;
-    private int currentPlayerIndex;
-    private Color currentColor;
-    private CoveredDeck coveredDeck;
-    private PlayedDeck playedDeck;
-    private boolean isClockwise = true;
+    private List<Player> players;       // Lista dei giocatori
+    private int currentPlayerIndex;     // Indice del giocatore corrente
+    private Color currentColor;         // Colore della carta in gioco
+    private CoveredDeck coveredDeck;    // Mazzo coperto
+    private PlayedDeck playedDeck;      // Mazzo scoperto
+    private boolean isClockwise = true; // Verso del turno
 
     public Game(List<Player> players) {
         this.players = players;
@@ -72,7 +72,32 @@ public class Game {
                                 players.get(currentPlayerIndex).drawCard(coveredDeck.drawCard());
                             }
                         }
-                        case SHUFFLE -> Collections.shuffle(players);
+                        case SHUFFLE -> {
+                            System.out.println("Carta SHUFFLE giocata! Tutte le mani vengono mischiate.");
+                        
+                            // 1. Raccogli tutte le carte dalle mani
+                            List<Card> allCards = new ArrayList<>();
+                            Map<Player, Integer> cardCountPerPlayer = new HashMap<>();
+                        
+                            for (Player p : players) {
+                                int count = p.getHand().size();
+                                cardCountPerPlayer.put(p, count);
+                                allCards.addAll(p.getHand());
+                                p.getHand().clear();  // svuota la mano
+                            }
+                        
+                            // 2. Mischia tutte le carte
+                            Collections.shuffle(allCards);
+                        
+                            // 3. Ridistribuisci le carte
+                            Iterator<Card> iterator = allCards.iterator();
+                            for (Player p : players) {
+                                int cardsToGive = cardCountPerPlayer.get(p);
+                                for (int i = 0; i < cardsToGive && iterator.hasNext(); i++) {
+                                    p.drawCard(iterator.next());
+                                }
+                            }
+                        }
                         case WILD -> {} // solo cambia colore
                     }
                 }
