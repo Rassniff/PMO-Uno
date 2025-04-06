@@ -11,9 +11,6 @@ public class Card {
 
     // Costruttore per le carte numerate
     public Card(Color color, int number) {
-        if (color == Color.SPECIAL) {
-            throw new IllegalArgumentException("Le carte speciali non hanno numero.");
-        }
         this.color = color;
         this.number = number;
     }

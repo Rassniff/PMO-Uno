@@ -11,9 +11,6 @@ public class SpecialCard extends Card {
     // Costruttore per carte speciali
     public SpecialCard(Color color, Action action) {
         super(color, -1);  // Le carte speciali non hanno numero
-        if (color == Color.SPECIAL && (action != Action.WILD && action != Action.WILD_DRAW_FOUR && action != Action.SHUFFLE)) {
-            throw new IllegalArgumentException("Le carte jolly e mischiatutto non hanno colore");
-        }
         this.action = action;
     }
 
