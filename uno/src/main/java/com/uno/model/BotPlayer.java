@@ -10,11 +10,11 @@ public class BotPlayer extends Player {
     @Override
     public Card playTurn(Card topCard, Color currentColor) {
         for (Card card : hand) {
-            if (GameRules.isPlayable(card, topCard, currentColor)) {
+            /*if (GameRules.isPlayable(card, topCard, currentColor)) {
                 hand.remove(card);
                 System.out.println(name + " gioca: " + card);
                 return card;
-            }
+            }*/
         }
         System.out.println(name + " pesca una carta.");
         return null;
