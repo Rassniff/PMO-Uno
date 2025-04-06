@@ -38,6 +38,7 @@ public class Card {
         return color == Color.SPECIAL;
     }
 
+    // Metodo che verifica se una carta può essere legalmente giocata sopra un'altra (da finire manca lo stesso tipo di SPECIAL CARD) 
     public boolean isPlayableOn(Card topCard) {
         // Caso 1: stesso colore
         if (this.color.equals(topCard.color)) {
@@ -50,7 +51,10 @@ public class Card {
         }
     
         // Caso 3: carta jolly
-      
+        if (this.color.equals(Color.SPECIAL)) {
+            return true;
+        }
+
         // Altrimenti, non giocabile
         return false;
     }
