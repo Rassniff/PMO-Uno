@@ -31,7 +31,8 @@ public abstract class Player {
         hand.remove(card);
     }
 
-    public boolean hasWon() {
+    // Metodo che controlla se il giocatore ha finito le carte in mano
+    public boolean isHandEmpty() {
         return hand.isEmpty();
     }
 
