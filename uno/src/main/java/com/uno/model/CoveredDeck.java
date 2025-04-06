@@ -72,4 +72,9 @@ public class CoveredDeck {
     public int size() {
         return cards.size();
     }
+
+    // Metodo per aggiungere una carta al mazzo
+    public void addCard(Card card) {
+        cards.add(card);
+    }
 }
