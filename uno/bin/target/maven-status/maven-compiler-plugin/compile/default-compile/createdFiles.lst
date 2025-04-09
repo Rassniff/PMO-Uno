@@ -1,0 +1,14 @@
+com\uno\model\Player.class
+com\uno\model\BotPlayer.class
+com\uno\model\SpecialCard.class
+com\uno\model\Game.class
+com\uno\view\Main.class
+com\uno\model\Deck.class
+com\uno\model\DiscardPile.class
+com\uno\model\GameRules.class
+com\uno\model\Color.class
+com\uno\model\TestUnoGame.class
+com\uno\model\Game$1.class
+com\uno\model\HumanPlayer.class
+com\uno\model\Action.class
+com\uno\model\Card.class
