@@ -1,10 +1,5 @@
 package com.uno.model;
 
-// Gli unici colori disponibili (rosso, giallo, verde, blu e speciali)
-enum Color {
-    RED, YELLOW, GREEN, BLUE, SPECIAL
-}
-
 public class Card {
     private Color color;   // Colore della carta
     private int number;    // Numero della carta (0-9)
