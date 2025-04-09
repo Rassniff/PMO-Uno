@@ -54,7 +54,7 @@ public class CoveredDeck {
         return cards.isEmpty();
     }
 
-    // Metodo per peschare
+    // Metodo per pescare
     public Card drawCard() {
         if (isEmpty()) {
             throw new IllegalStateException("Il mazzo è vuoto.");
