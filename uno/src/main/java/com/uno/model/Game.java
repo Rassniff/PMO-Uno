@@ -7,7 +7,7 @@ public class Game {
     private Color currentColor;         // Colore della carta in gioco
     private CoveredDeck coveredDeck;    // Mazzo coperto
     private PlayedDeck playedDeck;      // Mazzo scoperto
-    private TurnManager turnManager;
+    private TurnManager turnManager;    // Gestore dei turni
 
     public Game(List<Player> players) {
         this.players = players;
