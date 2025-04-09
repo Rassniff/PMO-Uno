@@ -4,17 +4,16 @@ import java.util.*;
 
 public class Game {
     private List<Player> players;       // Lista dei giocatori
-    private int currentPlayerIndex;     // Indice del giocatore corrente
     private Color currentColor;         // Colore della carta in gioco
     private CoveredDeck coveredDeck;    // Mazzo coperto
     private PlayedDeck playedDeck;      // Mazzo scoperto
-    private boolean isClockwise = true; // Verso del turno
+    private TurnManager turnManager;
 
     public Game(List<Player> players) {
         this.players = players;
         this.coveredDeck = new CoveredDeck();
         this.playedDeck = new PlayedDeck();
-        this.currentPlayerIndex = 0;
+        this.turnManager = new TurnManager(players);
 
         // Distribuisci 7 carte a ogni giocatore
         for (Player player : players) {
@@ -36,7 +35,7 @@ public class Game {
 
     public void playGame() {
         while (true) {
-            Player currentPlayer = players.get(currentPlayerIndex);
+            Player currentPlayer = turnManager.getCurrentPlayer();
             Card topCard = playedDeck.getLastCard();
 
             System.out.println("\nCarta sul tavolo: " + topCard + " (Colore attuale: " + currentColor + ")");
@@ -59,17 +58,17 @@ public class Game {
                 if (chosenCard instanceof SpecialCard) {
                     SpecialCard special = (SpecialCard) chosenCard;
                     switch (special.getAction()) {
-                        case REVERSE -> isClockwise = !isClockwise;
-                        case SKIP -> nextPlayer();
+                        case REVERSE -> turnManager.reverseDirection();
+                        case SKIP -> turnManager.advance();
                         case DRAW_TWO -> {
-                            nextPlayer();
-                            players.get(currentPlayerIndex).drawCard(coveredDeck.drawCard());
-                            players.get(currentPlayerIndex).drawCard(coveredDeck.drawCard());
+                            turnManager.advance();
+                            turnManager.getCurrentPlayer().drawCard(coveredDeck.drawCard());
+                            turnManager.getCurrentPlayer().drawCard(coveredDeck.drawCard());
                         }
                         case WILD_DRAW_FOUR -> {
-                            nextPlayer();
+                            turnManager.advance();
                             for (int i = 0; i < 4; i++) {
-                                players.get(currentPlayerIndex).drawCard(coveredDeck.drawCard());
+                                turnManager.getCurrentPlayer().drawCard(coveredDeck.drawCard());
                             }
                         }
                         case SHUFFLE -> {
@@ -109,15 +108,7 @@ public class Game {
                 currentPlayer.drawCard(drawn);
             }
 
-            nextPlayer();
-        }
-    }
-
-    private void nextPlayer() {
-        if (isClockwise) {
-            currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
-        } else {
-            currentPlayerIndex = (currentPlayerIndex - 1 + players.size()) % players.size();
+            turnManager.advance();
         }
     }
 }
