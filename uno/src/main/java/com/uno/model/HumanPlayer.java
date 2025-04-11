@@ -30,8 +30,20 @@ public class HumanPlayer extends Player {
             System.out.println((i + 1) + ": " + playable.get(i));
         }
 
-        System.out.print("Scegli una carta da giocare (1-" + playable.size() + "): ");
-        int choice = scanner.nextInt();
+        int choice = -1;
+        while (choice < 1 || choice > playable.size()) {
+            System.out.print("Scegli una carta da giocare (1-" + playable.size() + "): ");
+            if (scanner.hasNextInt()) {
+                choice = scanner.nextInt();
+                if (choice < 1 || choice > playable.size()) {
+                    System.out.println("Scelta non valida. Riprova.");
+                }
+            } else {
+                System.out.println("Inserisci un numero valido.");
+                scanner.next(); // Consuma l’input non numerico
+            }
+        }
+
         return playable.get(choice - 1);
     }
 

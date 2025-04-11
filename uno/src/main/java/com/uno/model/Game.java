@@ -18,16 +18,16 @@ public class Game {
         // Distribuisci 7 carte a ogni giocatore
         for (Player player : players) {
             for (int i = 0; i < 7; i++) {
-                player.drawCard(coveredDeck.drawCard());
+                player.drawCard(coveredDeck.drawCard(playedDeck));
             }
         }
 
         // Pesca la prima carta da mettere in cima alla pila degli scarti
-        Card firstCard = coveredDeck.drawCard();
+        Card firstCard = coveredDeck.drawCard(playedDeck);
         while (firstCard.isWild()) {  // Evita di iniziare con un jolly
             coveredDeck.addCard(firstCard);
             coveredDeck.shuffle();
-            firstCard = coveredDeck.drawCard();
+            firstCard = coveredDeck.drawCard(playedDeck);
         }
         playedDeck.addCard(firstCard);
         currentColor = firstCard.getColor();
@@ -62,13 +62,13 @@ public class Game {
                         case SKIP -> turnManager.advance();
                         case DRAW_TWO -> {
                             turnManager.advance();
-                            turnManager.getCurrentPlayer().drawCard(coveredDeck.drawCard());
-                            turnManager.getCurrentPlayer().drawCard(coveredDeck.drawCard());
+                            turnManager.getCurrentPlayer().drawCard(coveredDeck.drawCard(playedDeck));
+                            turnManager.getCurrentPlayer().drawCard(coveredDeck.drawCard(playedDeck));
                         }
                         case WILD_DRAW_FOUR -> {
                             turnManager.advance();
                             for (int i = 0; i < 4; i++) {
-                                turnManager.getCurrentPlayer().drawCard(coveredDeck.drawCard());
+                                turnManager.getCurrentPlayer().drawCard(coveredDeck.drawCard(playedDeck));
                             }
                         }
                         case SHUFFLE -> {
@@ -103,7 +103,7 @@ public class Game {
 
             } else {
                 // pesca una carta
-                Card drawn = coveredDeck.drawCard();
+                Card drawn = coveredDeck.drawCard(playedDeck);
                 System.out.println(currentPlayer.getName() + " pesca: " + drawn);
                 currentPlayer.drawCard(drawn);
             }

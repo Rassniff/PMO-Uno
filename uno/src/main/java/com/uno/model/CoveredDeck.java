@@ -55,10 +55,26 @@ public class CoveredDeck {
     }
 
     // Metodo per pescare
-    public Card drawCard() {
+    public Card drawCard(PlayedDeck playedDeck) {
+    	List<Card> discardPile = playedDeck.resetAndReturnAllExceptTop();
+
         if (isEmpty()) {
-            throw new IllegalStateException("Il mazzo è vuoto.");
+            if (discardPile.size() <= 1) {
+                throw new IllegalStateException("Impossibile rigenerare il mazzo: non ci sono abbastanza carte nella pila degli scarti.");
+            }
+
+            Card lastPlayed = discardPile.remove(discardPile.size() - 1);
+
+            List<Card> reshuffled = new ArrayList<>(discardPile);
+            discardPile.clear();
+            discardPile.add(lastPlayed);
+
+            Collections.shuffle(reshuffled);
+            cards.addAll(reshuffled);
+
+            System.out.println("Il mazzo era vuoto. Pila degli scarti rimescolata.");
         }
+
         return cards.pop();
     }
 
