@@ -107,14 +107,6 @@ public class Game {
             if (chosenCard != null) {
                 currentPlayer.removeCard(chosenCard);
                 playedDeck.addCard(chosenCard);
-                
-                // Gestione del colore attuale
-                if (chosenCard.getColor() == Color.SPECIAL && chosenCard instanceof SpecialCard) {
-                    currentColor = currentPlayer.chooseColor();
-                    System.out.println(currentPlayer.getName() + " ha scelto il colore: " + currentColor);
-                } else {
-                    currentColor = chosenCard.getColor();
-                }
 
                 System.out.println(currentPlayer.getName() + " ha giocato: " + chosenCard);
 
