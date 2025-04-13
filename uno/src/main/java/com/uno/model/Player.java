@@ -40,4 +40,6 @@ public abstract class Player {
     public abstract Card playTurn(Card topCard, Color currentColor);
 
     public abstract boolean isBot();
+
+    public abstract Color chooseColor();
 }

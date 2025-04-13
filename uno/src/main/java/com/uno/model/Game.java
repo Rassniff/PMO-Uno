@@ -33,6 +33,67 @@ public class Game {
         currentColor = firstCard.getColor();
     }
 
+    private void handleSpecialCard(SpecialCard card, Player currentPlayer) {
+        switch (card.getAction()) {
+            case REVERSE -> {
+                turnManager.reverseDirection();
+                System.out.println("Direzione invertita!");
+            }
+    
+            case SKIP -> {
+                turnManager.advance();
+                System.out.println("Salto del turno!");
+            }
+    
+            case DRAW_TWO -> {
+                turnManager.advance();
+                Player next = turnManager.getCurrentPlayer();
+                System.out.println(next.getName() + " pesca 2 carte.");
+                next.drawCard(coveredDeck.drawCard(playedDeck));
+                next.drawCard(coveredDeck.drawCard(playedDeck));
+            }
+    
+            case WILD_DRAW_FOUR -> {
+                currentColor = currentPlayer.chooseColor();
+                turnManager.advance();
+                Player next = turnManager.getCurrentPlayer();
+                System.out.println(next.getName() + " pesca 4 carte.");
+                for (int i = 0; i < 4; i++) {
+                    next.drawCard(coveredDeck.drawCard(playedDeck));
+                }
+            }
+    
+            case WILD -> {
+                currentColor = currentPlayer.chooseColor();
+            }
+    
+            case SHUFFLE -> {
+                System.out.println("Carta SHUFFLE giocata! Tutte le mani vengono mischiate.");
+    
+                List<Card> allCards = new ArrayList<>();
+                Map<Player, Integer> cardCountPerPlayer = new HashMap<>();
+    
+                for (Player p : players) {
+                    int count = p.getHand().size();
+                    cardCountPerPlayer.put(p, count);
+                    allCards.addAll(p.getHand());
+                    p.getHand().clear();
+                }
+    
+                Collections.shuffle(allCards);
+                Iterator<Card> iterator = allCards.iterator();
+                for (Player p : players) {
+                    int cardsToGive = cardCountPerPlayer.get(p);
+                    for (int i = 0; i < cardsToGive && iterator.hasNext(); i++) {
+                        p.drawCard(iterator.next());
+                    }
+                }
+    
+                currentColor = currentPlayer.chooseColor();
+            }
+        }
+    }    
+
     public void playGame() {
         while (true) {
             Player currentPlayer = turnManager.getCurrentPlayer();
@@ -46,7 +107,15 @@ public class Game {
             if (chosenCard != null) {
                 currentPlayer.removeCard(chosenCard);
                 playedDeck.addCard(chosenCard);
-                currentColor = chosenCard.getColor(); // aggiornare solo se non è jolly, altrimenti chiedi all’utente
+                
+                // Gestione del colore attuale
+                if (chosenCard.getColor() == Color.SPECIAL && chosenCard instanceof SpecialCard) {
+                    currentColor = currentPlayer.chooseColor();
+                    System.out.println(currentPlayer.getName() + " ha scelto il colore: " + currentColor);
+                } else {
+                    currentColor = chosenCard.getColor();
+                }
+
                 System.out.println(currentPlayer.getName() + " ha giocato: " + chosenCard);
 
                 if (currentPlayer.isHandEmpty()) {
@@ -55,57 +124,33 @@ public class Game {
                 }
 
                 // gestione base delle carte speciali (puoi estendere)
-                if (chosenCard instanceof SpecialCard) {
-                    SpecialCard special = (SpecialCard) chosenCard;
-                    switch (special.getAction()) {
-                        case REVERSE -> turnManager.reverseDirection();
-                        case SKIP -> turnManager.advance();
-                        case DRAW_TWO -> {
-                            turnManager.advance();
-                            turnManager.getCurrentPlayer().drawCard(coveredDeck.drawCard(playedDeck));
-                            turnManager.getCurrentPlayer().drawCard(coveredDeck.drawCard(playedDeck));
-                        }
-                        case WILD_DRAW_FOUR -> {
-                            turnManager.advance();
-                            for (int i = 0; i < 4; i++) {
-                                turnManager.getCurrentPlayer().drawCard(coveredDeck.drawCard(playedDeck));
-                            }
-                        }
-                        case SHUFFLE -> {
-                            System.out.println("Carta SHUFFLE giocata! Tutte le mani vengono mischiate.");
-                        
-                            // 1. Raccogli tutte le carte dalle mani
-                            List<Card> allCards = new ArrayList<>();
-                            Map<Player, Integer> cardCountPerPlayer = new HashMap<>();
-                        
-                            for (Player p : players) {
-                                int count = p.getHand().size();
-                                cardCountPerPlayer.put(p, count);
-                                allCards.addAll(p.getHand());
-                                p.getHand().clear();  // svuota la mano
-                            }
-                        
-                            // 2. Mischia tutte le carte
-                            Collections.shuffle(allCards);
-                        
-                            // 3. Ridistribuisci le carte
-                            Iterator<Card> iterator = allCards.iterator();
-                            for (Player p : players) {
-                                int cardsToGive = cardCountPerPlayer.get(p);
-                                for (int i = 0; i < cardsToGive && iterator.hasNext(); i++) {
-                                    p.drawCard(iterator.next());
-                                }
-                            }
-                        }
-                        case WILD -> {} // solo cambia colore
-                    }
+                if (chosenCard instanceof SpecialCard specialCard) {
+                    handleSpecialCard(specialCard, currentPlayer);
                 }
-
             } else {
                 // pesca una carta
                 Card drawn = coveredDeck.drawCard(playedDeck);
                 System.out.println(currentPlayer.getName() + " pesca: " + drawn);
-                currentPlayer.drawCard(drawn);
+
+                // Verifica se può essere giocata subito
+                if (TurnManager.isPlayable(drawn, topCard, currentColor)) {
+                    System.out.println(currentPlayer.getName() + " gioca la carta appena pescata: " + drawn);
+                    playedDeck.addCard(drawn);
+                    currentColor = (drawn.getColor() == Color.SPECIAL) ? currentPlayer.chooseColor() : drawn.getColor();
+
+                    if (drawn instanceof SpecialCard specialCard) {
+                        handleSpecialCard(specialCard, currentPlayer);
+                    }
+                } else {
+                    currentPlayer.drawCard(drawn); // la tiene in mano
+                }
+            }
+
+            try {
+                Thread.sleep(2000); // Pausa di 2 secondi
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt(); // Ripristina lo stato di interruzione del thread
+                System.out.println("Il thread è stato interrotto.");
             }
 
             turnManager.advance();

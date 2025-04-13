@@ -16,7 +16,7 @@ public class HumanPlayer extends Player {
 
         List<Card> playable = new ArrayList<>();
         for (Card c : hand) {
-            if (Rules.isPlayable(c, topCard, currentColor)) {
+            if (TurnManager.isPlayable(c, topCard, currentColor)) {
                 playable.add(c);
             }
         }
@@ -43,12 +43,40 @@ public class HumanPlayer extends Player {
                 scanner.next(); // Consuma l’input non numerico
             }
         }
-
+        
         return playable.get(choice - 1);
     }
 
     @Override
     public boolean isBot() {
         return false;
+    }
+
+    @Override
+    public Color chooseColor() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Scegli un colore: ");
+        System.out.println("1: ROSSO\n2: GIALLO\n3: VERDE\n4: BLU");
+
+        int choice;
+        while (true) {
+            try {
+                System.out.print("Inserisci il numero del colore: ");
+                choice = scanner.nextInt();
+                if (choice >= 1 && choice <= 4) break;
+                System.out.println("Scelta non valida. Riprova.");
+            } catch (Exception e) {
+                System.out.println("Input non valido. Riprova.");
+                scanner.nextLine(); // pulisce il buffer
+            }
+        }
+
+        return switch (choice) {
+            case 1 -> Color.RED;
+            case 2 -> Color.YELLOW;
+            case 3 -> Color.GREEN;
+            case 4 -> Color.BLUE;
+            default -> Color.RED; // fallback sicuro
+        };
     }
 }
