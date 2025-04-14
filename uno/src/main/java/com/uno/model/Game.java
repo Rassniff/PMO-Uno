@@ -110,5 +110,34 @@ public class Game {
 
             turnManager.advance();
         }
+
+        
+
+    }
+
+
+
+    //////////////////////////////////////////////implementazione con javafx
+    public Card getTopCard() {
+        return playedDeck.getLastCard();
+    }
+
+    public Color getCurrentColor(){
+        return currentColor;
+    }
+    
+    public void playCard(Card card) {
+        playedDeck.addCard(card);
+        currentColor = card.getColor();
+    }
+    
+    public Card drawCardFor(Player player) {
+        Card c = coveredDeck.drawCard();
+        player.drawCard(c);
+        return c;
+    }        
+
+    public TurnManager getTurnManager(){
+        return turnManager;
     }
 }
