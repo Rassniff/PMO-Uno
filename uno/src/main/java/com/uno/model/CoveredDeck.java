@@ -55,10 +55,20 @@ public class CoveredDeck {
     }
 
     // Metodo per pescare
-    public Card drawCard() {
+    public Card drawCard(PlayedDeck playedDeck) {
         if (isEmpty()) {
-            throw new IllegalStateException("Il mazzo è vuoto.");
+            List<Card> toRecycle = playedDeck.resetAndReturnAllExceptTop();
+    
+            if (toRecycle.isEmpty()) {
+                System.out.println("⚠️ Solo una carta rimasta sul tavolo. Non posso riciclare, ma continuo.");
+                // Forza a rimanere vuoto ma evita crash
+                return null;
+            }
+    
+            addToBottom(toRecycle);
+            shuffle();
         }
+    
         return cards.pop();
     }
 

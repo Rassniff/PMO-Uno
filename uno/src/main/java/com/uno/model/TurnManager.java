@@ -3,8 +3,8 @@ package com.uno.model;
 import java.util.List;
 
 public class TurnManager {
-    private List<Player> players; //Lista dei giocatori in partitia
-    private int currentPlayerIndex; //Variabile che tiene traccia del giocatore attuale nella lista
+    private List<Player> players;       //Lista dei giocatori in partitia
+    private int currentPlayerIndex;     //Variabile che tiene traccia del giocatore attuale nella lista
     private boolean isClockwise = true; //Variabile che serve a determinare la direzione del gioco
 
     public TurnManager(List<Player> players) {
@@ -50,4 +50,23 @@ public class TurnManager {
         return players;
     }
     
+    public static boolean isPlayable(Card toPlay, Card topCard, Color currentColor) {
+        // Se è una SpecialCard nera (jolly, jolly+4, mischiatutto), è sempre giocabile
+        if (toPlay instanceof SpecialCard) {
+            SpecialCard special = (SpecialCard) toPlay;
+            Action action = special.getAction();
+    
+            if (toPlay.getColor() == Color.SPECIAL &&
+                (action == Action.WILD || action == Action.WILD_DRAW_FOUR || action == Action.SHUFFLE)) {
+                return true;
+            }
+    
+            // Se è colorata, va controllato il colore
+            return toPlay.getColor() == currentColor;
+        }
+    
+        // Carte numeriche: giocabile se ha stesso colore o stesso numero
+        return toPlay.getColor() == currentColor
+            || (topCard instanceof Card && toPlay instanceof Card && toPlay.getNumber() == ((Card) topCard).getNumber());
+    }
 }
