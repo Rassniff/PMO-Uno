@@ -169,7 +169,7 @@ public class Game {
     }
     
     public Card drawCardFor(Player player) {
-        Card c = coveredDeck.drawCard();
+        Card c = coveredDeck.drawCard(playedDeck);
         player.drawCard(c);
         return c;
     }        
