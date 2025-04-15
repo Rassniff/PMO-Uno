@@ -35,6 +35,14 @@ public abstract class Player {
     public boolean isHandEmpty() {
         return hand.isEmpty();
     }
+    
+    public boolean canPlayWildDrawFour(Card topCard, Color currentColor) {
+        // Se il giocatore ha almeno una carta giocabile (escluso il jolly+4), non può giocare il jolly+4
+        return hand.stream()
+            .noneMatch(card -> TurnManager.isPlayable(card, topCard, currentColor) &&
+                              !(card instanceof SpecialCard specialCard &&
+                                specialCard.getAction() == Action.WILD_DRAW_FOUR));
+    }
 
     // Metodi che definiscono se il giocatore è umano o bot
     public abstract Card playTurn(Card topCard, Color currentColor);

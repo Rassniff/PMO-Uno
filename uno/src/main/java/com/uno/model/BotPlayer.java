@@ -1,5 +1,6 @@
 package com.uno.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,8 +13,15 @@ public class BotPlayer extends Player {
     // Metodo per far giocare i bot
     @Override
     public Card playTurn(Card topCard, Color currentColor) {
-        for (Card card : hand) {
+        for (Card card : new ArrayList<>(hand)) {
             if (TurnManager.isPlayable(card, topCard, currentColor)) {
+            	//regola per il +4
+            	if(card instanceof SpecialCard special &&
+            	   special.getAction() == Action.WILD_DRAW_FOUR &&
+            	   !canPlayWildDrawFour(topCard, currentColor)) {
+            		continue;
+            	}
+            	
                 hand.remove(card);
                 System.out.println(name + " gioca: " + card);
                 return card;
