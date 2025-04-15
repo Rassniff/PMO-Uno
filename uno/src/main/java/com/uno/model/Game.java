@@ -115,7 +115,7 @@ public class Game {
                     break;
                 }
 
-                // gestione base delle carte speciali (puoi estendere)
+                // gestione base delle carte speciali 
                 if (chosenCard instanceof SpecialCard specialCard) {
                     handleSpecialCard(specialCard, currentPlayer);
                 }

@@ -17,6 +17,11 @@ public class HumanPlayer extends Player {
         List<Card> playable = new ArrayList<>();
         for (Card c : hand) {
             if (TurnManager.isPlayable(c, topCard, currentColor)) {
+            	if (c instanceof SpecialCard special && special.getAction() == Action.WILD_DRAW_FOUR) {
+                    if (!canPlayWildDrawFour(topCard, currentColor)) {
+                        continue;
+                    }
+                }
                 playable.add(c);
             }
         }
@@ -35,16 +40,30 @@ public class HumanPlayer extends Player {
             System.out.print("Scegli una carta da giocare (1-" + playable.size() + "): ");
             if (scanner.hasNextInt()) {
                 choice = scanner.nextInt();
-                if (choice < 1 || choice > playable.size()) {
+
+                if (choice >= 1 && choice <= playable.size()) {
+                    Card selected = playable.get(choice - 1);
+
+                    if (selected instanceof SpecialCard special &&
+                        special.getAction() == Action.WILD_DRAW_FOUR &&
+                        !canPlayWildDrawFour(topCard, currentColor)) {
+
+                        System.out.println("⚠️ Non puoi giocare il +4 se hai altre carte valide!");
+                        continue; // torna a chiedere la scelta
+                    }
+
+                    hand.remove(selected);
+                    return selected;
+                } else {
                     System.out.println("Scelta non valida. Riprova.");
                 }
             } else {
                 System.out.println("Inserisci un numero valido.");
-                scanner.next(); // Consuma l’input non numerico
+                scanner.next(); // Consuma input non numerico
             }
         }
-        
-        return playable.get(choice - 1);
+
+        return null; // fallback sicuro
     }
 
     @Override
