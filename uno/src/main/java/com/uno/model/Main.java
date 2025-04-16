@@ -5,9 +5,9 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         Player p1 = new HumanPlayer("Tu");
-        Player p2 = new BotPlayer("Bot1");
-        Player p3 = new BotPlayer("Bot2");
-        Player p4 = new BotPlayer("Bot3");
+        Player p2 = new BotPlayer("Diego");
+        Player p3 = new BotPlayer("Andri");
+        Player p4 = new BotPlayer("Edo");
 
         //creazione game
         Game game = new Game(List.of(p1, p2, p3, p4));

@@ -43,6 +43,11 @@ public abstract class Player {
                               !(card instanceof SpecialCard specialCard &&
                                 specialCard.getAction() == Action.WILD_DRAW_FOUR));
     }
+    
+    //clear della mano di gioco
+    public void clearHand() {
+    	this.hand.clear();
+    }
 
     // Metodi che definiscono se il giocatore è umano o bot
     public abstract Card playTurn(Card topCard, Color currentColor);
