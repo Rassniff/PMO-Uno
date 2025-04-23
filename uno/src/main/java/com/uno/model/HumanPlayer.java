@@ -71,8 +71,17 @@ public class HumanPlayer extends Player {
         return false;
     }
 
+    //da implementare
     @Override
     public Color chooseColor() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'chooseColor'");
+    }
+
+    //Questo metodo funziona solo per la versione CLI
+    /* @Override
+    public Color chooseColor() {
+
         Scanner scanner = new Scanner(System.in);
         System.out.println("Scegli un colore: ");
         System.out.println("1: ROSSO\n2: GIALLO\n3: VERDE\n4: BLU");
@@ -97,5 +106,5 @@ public class HumanPlayer extends Player {
             case 4 -> Color.BLUE;
             default -> Color.RED; // fallback sicuro
         };
-    }
+    }*/
 }

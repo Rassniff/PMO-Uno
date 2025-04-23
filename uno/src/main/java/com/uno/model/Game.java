@@ -94,7 +94,7 @@ public class Game {
         }
     }    
 
-    public void playGame() {
+    /*public void playGame() {
         while (true) {
             Player currentPlayer = turnManager.getCurrentPlayer();
             Card topCard = playedDeck.getLastCard();
@@ -150,7 +150,7 @@ public class Game {
 
         
 
-    }
+    }*/
 
 
 
@@ -176,5 +176,9 @@ public class Game {
 
     public TurnManager getTurnManager(){
         return turnManager;
+    }
+
+    public void handleSpecialCardExternally(SpecialCard card, Player currentPlayer) {
+        handleSpecialCard(card, currentPlayer);
     }
 }
