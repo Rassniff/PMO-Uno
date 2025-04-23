@@ -30,6 +30,10 @@ public class Card {
         return color == Color.SPECIAL;
     }
 
+    public String getImageName() {
+       return color.name().toLowerCase() + "_" + number + ".png";
+    }
+
     // Metodo che verifica se una carta può essere legalmente giocata sopra un'altra (da finire manca lo stesso tipo di SPECIAL CARD) 
     public boolean isPlayableOn(Card topCard) {
         // Caso 1: stesso colore
