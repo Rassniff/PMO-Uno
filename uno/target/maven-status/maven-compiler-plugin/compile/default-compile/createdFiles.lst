@@ -12,5 +12,4 @@ com\uno\model\Action.class
 com\uno\model\Card.class
 com\uno\model\CoveredDeck.class
 com\uno\model\SpecialCard.class
-com\uno\model\Main.class
 com\uno\model\HumanPlayer.class

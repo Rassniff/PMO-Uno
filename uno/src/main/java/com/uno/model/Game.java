@@ -152,8 +152,6 @@ public class Game {
 
     }*/
 
-
-
     //////////////////////////////////////////////implementazione con javafx
     public Card getTopCard() {
         return playedDeck.getLastCard();
@@ -181,4 +179,18 @@ public class Game {
     public void handleSpecialCardExternally(SpecialCard card, Player currentPlayer) {
         handleSpecialCard(card, currentPlayer);
     }
+
+    public boolean canCurrentPlayerPlay() {
+        Player currentPlayer = turnManager.getCurrentPlayer();
+        Card topCard = getTopCard();
+        Color color = getCurrentColor();
+    
+        for (Card card : currentPlayer.getHand()) {
+            if (TurnManager.isPlayable(card, topCard, color)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
 }
