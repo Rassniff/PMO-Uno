@@ -8,13 +8,15 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.FlowPane;
+//import javafx.scene.layout.HBox;
 
 import java.util.List;
 
 public class GameController {
 
-    @FXML private HBox playerHandBox;
+    //@FXML private HBox playerHandBox;
+    @FXML private FlowPane playerHandBox;
     @FXML private ImageView topCardImage;
     @FXML private Button drawButton;
     @FXML private Label statusText;
@@ -24,7 +26,7 @@ public class GameController {
 
     public void initializeGame(List<Player> players) {
         game = new Game(players);
-        humanPlayer = players.get(0); // supponiamo che il primo sia il giocatore umano
+        humanPlayer = players.get(0); // supponiamo che il primo sia il giocatore umano        
         updateUI();
         startTurnLoop();
     }
@@ -36,7 +38,7 @@ public class GameController {
             handleBotTurn((BotPlayer) currentPlayer);
         } else {
             statusText.setText("È il tuo turno!");
-            drawButton.setDisable(false);
+            //drawButton.setDisable(false);
         }
     }
 
@@ -96,13 +98,20 @@ public class GameController {
         Player currentPlayer = game.getTurnManager().getCurrentPlayer();
         if (!currentPlayer.equals(humanPlayer)) return;
 
+         // 🔒 Blocco di sicurezza aggiuntivo
+        if (game.canCurrentPlayerPlay()) {
+            // Opzionale: mostra messaggio che non può pescare se ha carte valide
+            statusText.setText("Hai carte giocabili! Non puoi pescare.");
+            return;
+        }
+
         Card drawn = game.drawCardFor(humanPlayer);
         Card topCard = game.getTopCard();
 
         if (TurnManager.isPlayable(drawn, topCard, game.getCurrentColor())) {
             playCard(drawn);
         } else {
-            updateUI();
+            //updateUI();
             game.getTurnManager().advance();
             startTurnLoop();
         }
@@ -111,6 +120,8 @@ public class GameController {
     private void playCard(Card card) {
         humanPlayer.removeCard(card);
         game.playCard(card);
+        statusText.setText("Hai giocato: " + card.toString());
+
 
         if (card instanceof SpecialCard specialCard) {
             game.handleSpecialCardExternally(specialCard, humanPlayer);
@@ -131,6 +142,10 @@ public class GameController {
     private void updateUI() {
         updateTopCardImage();
         updateHand();
+
+        // Disabilita il bottone se il giocatore ha carte giocabili
+        boolean canPlay = game.canCurrentPlayerPlay();
+        drawButton.setDisable(canPlay);
     }
 
     private void updateTopCardImage() {
@@ -145,10 +160,23 @@ public class GameController {
         Card topCard = game.getTopCard();
         Color currentColor = game.getCurrentColor();
 
+        int handSize = humanPlayer.getHand().size();
+        int maxCardsPerRow = Math.max(7, handSize); // o fissa 7 se preferisci
+        double spacingCompensation = 1.1; // Per compensare gli hgap/vgap
+
         for (Card card : humanPlayer.getHand()) {
             ImageView cardView = new ImageView();
-            cardView.setFitHeight(120);
+            //cardView.setFitHeight(120);
+            //cardView.setPreserveRatio(true);
+
             cardView.setPreserveRatio(true);
+
+            // Responsive fitWidth legato al contenitore
+            cardView.fitWidthProperty().bind(
+                playerHandBox.widthProperty().divide(maxCardsPerRow * spacingCompensation)
+            );
+
+
             String imageName = card.getImageName();
             Image image = new Image(getClass().getResourceAsStream("/com/uno/images/cards/" + imageName));
             cardView.setImage(image);
