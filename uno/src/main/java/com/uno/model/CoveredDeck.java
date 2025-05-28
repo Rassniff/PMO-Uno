@@ -60,7 +60,7 @@ public class CoveredDeck {
             List<Card> toRecycle = playedDeck.resetAndReturnAllExceptTop();
     
             if (toRecycle.isEmpty()) {
-                System.out.println("⚠️ Solo una carta rimasta sul tavolo. Non posso riciclare, ma continuo.");
+                System.out.println("Solo una carta rimasta sul tavolo. Non posso riciclare, ma continuo.");
                 // Forza a rimanere vuoto ma evita crash
                 return null;
             }

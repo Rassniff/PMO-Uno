@@ -30,13 +30,12 @@ public class BotPlayer extends Player {
         System.out.println(name + " pesca una carta.");
         return null;
     }
-
+    
     @Override
     public boolean isBot() {
         return true;
     }
 
-    @Override
     public Color chooseColor() {
         Map<Color, Integer> colorCount = new HashMap<>();
 

@@ -25,6 +25,8 @@ public class App extends Application {
 
         Player human = new HumanPlayer("Tu");
         Player bot1 = new BotPlayer("Bot1");
+        //Player bot2 = new BotPlayer("Bot2");
+        //Player bot3 = new BotPlayer("Bot3");
         
         controller.initializeGame(List.of(human, bot1));
 

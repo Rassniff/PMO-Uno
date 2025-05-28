@@ -8,6 +8,32 @@ public class Game {
     private CoveredDeck coveredDeck;    // Mazzo coperto
     private PlayedDeck playedDeck;      // Mazzo scoperto
     private TurnManager turnManager;    // Gestore dei turni
+    private Player winner = null;
+    private List<GameListener> listeners = new ArrayList<>();
+    
+    public void addListener(GameListener listener) {
+        listeners.add(listener);
+    }
+
+    private void notifyGameOver(Player winner) {
+        for (GameListener l : listeners) {
+            l.onGameOver(winner);
+        }
+    }
+
+    private void notifyTurnChanged(Player currentPlayer) {
+        for (GameListener l : listeners) {
+            l.onTurnChanged(currentPlayer);
+        }
+    }
+
+    private void notifyColorChanged(Color newColor) {
+        for (GameListener l : listeners) {
+            l.onColorChanged(newColor);
+        }
+    }
+
+
 
     public Game(List<Player> players) {
         this.players = players;
@@ -33,7 +59,7 @@ public class Game {
         currentColor = firstCard.getColor();
     }
 
-    private void handleSpecialCard(SpecialCard card, Player currentPlayer) {
+    /*private void handleSpecialCard(SpecialCard card, Player currentPlayer) {
         switch (card.getAction()) {
             case REVERSE -> {
                 turnManager.reverseDirection();
@@ -92,7 +118,7 @@ public class Game {
                 currentColor = currentPlayer.chooseColor();
             }
         }
-    }    
+    } */
 
     /*public void playGame() {
         while (true) {
@@ -152,6 +178,124 @@ public class Game {
 
     }*/
 
+    public boolean playTurn(Player player, Card card, Color chosenColor) {
+        // Rimuovi la carta dalla mano
+        player.removeCard(card);
+
+        // Gioca la carta sul mazzo
+        playedDeck.addCard(card);
+
+        // Gestione colore corrente
+        if (card instanceof SpecialCard specialCard) {
+            // Se è una wild, usa il colore scelto
+            if (specialCard.getAction() == Action.WILD || specialCard.getAction() == Action.WILD_DRAW_FOUR || specialCard.getAction() == Action.SHUFFLE) {
+                if (chosenColor != null) {
+                    currentColor = chosenColor;
+                }
+            } else {
+                currentColor = card.getColor();
+            }
+            // Applica effetti speciali
+            handleSpecialCard(specialCard, player, chosenColor);
+        } else {
+            currentColor = card.getColor();
+        }
+
+        if (player.isHandEmpty()) {
+            winner = player; // <-- Qui salvi il vincitore
+            notifyGameOver(winner);// Notifica gli ascoltatori del vincitore
+            return true;
+        }
+        return false;
+        // Ritorna true se il giocatore ha vinto
+        //return player.isHandEmpty();
+    }
+    
+    private void handleSpecialCard(SpecialCard card, Player currentPlayer, Color chosenColor) {
+        
+        if ((card.getAction() == Action.WILD || card.getAction() == Action.WILD_DRAW_FOUR || card.getAction() == Action.SHUFFLE)
+            && chosenColor == null && !currentPlayer.isBot()) {
+                chosenColor = Color.RED; // Default di sicurezza per l'umano
+        }
+    
+        switch (card.getAction()) {
+        case REVERSE -> {
+            turnManager.reverseDirection();
+            System.out.println("Direzione invertita!");
+        }
+
+        case SKIP -> {
+            turnManager.advance();
+            System.out.println("Salto del turno!");
+        }
+
+        case DRAW_TWO -> {
+            turnManager.advance();
+            Player next = turnManager.getCurrentPlayer();
+            System.out.println(next.getName() + " pesca 2 carte.");
+            next.drawCard(coveredDeck.drawCard(playedDeck));
+            next.drawCard(coveredDeck.drawCard(playedDeck));
+        }
+
+        case WILD_DRAW_FOUR -> {
+            if (chosenColor != null) {
+                //currentColor = chosenColor;
+                setCurrentColor(chosenColor);
+            } else {
+                //currentColor = currentPlayer.chooseColor();
+                setCurrentColor(currentPlayer.chooseColor());
+            }
+            turnManager.advance();
+            Player next = turnManager.getCurrentPlayer();
+            System.out.println(next.getName() + " pesca 4 carte.");
+            for (int i = 0; i < 4; i++) {
+                next.drawCard(coveredDeck.drawCard(playedDeck));
+            }
+        }
+
+        case WILD -> {
+            if (chosenColor != null) {
+                //currentColor = chosenColor;
+                setCurrentColor(chosenColor);
+            } else {
+                //currentColor = currentPlayer.chooseColor();
+                setCurrentColor(currentPlayer.chooseColor());
+            }
+        }
+
+        case SHUFFLE -> {
+            System.out.println("Carta SHUFFLE giocata! Tutte le mani vengono mischiate.");
+
+            List<Card> allCards = new ArrayList<>();
+            Map<Player, Integer> cardCountPerPlayer = new HashMap<>();
+
+            for (Player p : players) {
+                int count = p.getHand().size();
+                cardCountPerPlayer.put(p, count);
+                allCards.addAll(p.getHand());
+                p.getHand().clear();
+            }
+
+            Collections.shuffle(allCards);
+            Iterator<Card> iterator = allCards.iterator();
+            for (Player p : players) {
+                int cardsToGive = cardCountPerPlayer.get(p);
+                for (int i = 0; i < cardsToGive && iterator.hasNext(); i++) {
+                    p.drawCard(iterator.next());
+                }
+            }
+
+            if (chosenColor != null) {
+                //currentColor = chosenColor;
+                setCurrentColor(chosenColor);
+            } else {
+                //currentColor = currentPlayer.chooseColor();
+                setCurrentColor(currentPlayer.chooseColor());
+            }
+        }
+    }
+}
+
     //////////////////////////////////////////////implementazione con javafx
     public Card getTopCard() {
         return playedDeck.getLastCard();
@@ -159,6 +303,11 @@ public class Game {
 
     public Color getCurrentColor(){
         return currentColor;
+    }
+
+    public void setCurrentColor(Color color){
+        this.currentColor = color;
+        notifyColorChanged(color);
     }
     
     public void playCard(Card card) {
@@ -168,7 +317,14 @@ public class Game {
     
     public Card drawCardFor(Player player) {
         Card c = coveredDeck.drawCard(playedDeck);
-        player.drawCard(c);
+        //player.drawCard(c);
+        if(c != null){
+            player.drawCard(c);
+        } else{
+            for (GameListener l : listeners) {
+                l.onDrawPatta(); // Notifica che il mazzo è vuoto
+            }
+        }
         return c;
     }        
 
@@ -176,8 +332,8 @@ public class Game {
         return turnManager;
     }
 
-    public void handleSpecialCardExternally(SpecialCard card, Player currentPlayer) {
-        handleSpecialCard(card, currentPlayer);
+    public void handleSpecialCardExternally(SpecialCard card, Player currentPlayer, Color chosenColor) {
+        handleSpecialCard(card, currentPlayer, chosenColor);
     }
 
     public boolean canCurrentPlayerPlay() {
@@ -193,4 +349,21 @@ public class Game {
         return false;
     }
     
+    public boolean isGameOver() {
+        return winner != null;
+    }
+
+    public Player getWinner() {
+        return winner;
+    }
+
+    public Player getCurrentPlayer() {
+        return turnManager.getCurrentPlayer();
+    }
+
+    public void advanceTurn() {
+        turnManager.advance();
+        notifyTurnChanged(getCurrentPlayer());
+    }
+
 }

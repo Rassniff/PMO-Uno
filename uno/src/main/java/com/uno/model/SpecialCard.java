@@ -1,6 +1,16 @@
 package com.uno.model;
 
+import java.util.Map;
+
 public class SpecialCard extends Card {
+    private static final Map<Action, String> actionToImage = Map.of(
+        Action.SKIP, "skip.png",
+        Action.REVERSE, "reverse.png",
+        Action.DRAW_TWO, "draw.png",
+        Action.WILD, "wild.png",
+        Action.WILD_DRAW_FOUR, "draw4.png",
+        Action.SHUFFLE, "shuffle.png"
+        );
     private Action action;  // Tipo di azione
 
     // Costruttore per carte speciali
@@ -19,31 +29,10 @@ public class SpecialCard extends Card {
         // Carte jolly: wild.png, draw4.png, shuffle.png
 
         String colorPrefix = (getColor() != Color.SPECIAL) ? getColor().name().toLowerCase() + "_" : "";
-        String imageName = "";
-
-        switch (action) {
-            case SKIP:  
-                imageName = colorPrefix + "skip.png";
-                break;
-            case REVERSE:  
-                imageName = colorPrefix + "reverse.png";
-                break;
-            case DRAW_TWO:  
-                imageName = colorPrefix + "draw.png";
-                break;
-            case WILD:  
-                imageName = "wild.png";
-                break;
-            case WILD_DRAW_FOUR:  
-                imageName = "draw4.png";
-                break;
-            case SHUFFLE:  
-                imageName = "shuffle.png";
-                break;
-        }
-        return imageName;
+        String imageName = actionToImage.get(action);
+        
+        return colorPrefix + imageName;
     }
-
 
     // Metodo per stampare i dettagli della carta
     @Override

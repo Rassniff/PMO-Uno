@@ -1,9 +1,5 @@
 package com.uno.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-
 public class HumanPlayer extends Player {
 
     public HumanPlayer(String name) {
@@ -12,7 +8,7 @@ public class HumanPlayer extends Player {
 
     @Override
     public Card playTurn(Card topCard, Color currentColor) {
-        Scanner scanner = new Scanner(System.in);
+        /*Scanner scanner = new Scanner(System.in);
 
         List<Card> playable = new ArrayList<>();
         for (Card c : hand) {
@@ -62,9 +58,11 @@ public class HumanPlayer extends Player {
                 scanner.next(); // Consuma input non numerico
             }
         }
-
+        */
         return null; // fallback sicuro
+        
     }
+    
 
     @Override
     public boolean isBot() {
@@ -74,9 +72,10 @@ public class HumanPlayer extends Player {
     //da implementare
     @Override
     public Color chooseColor() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'chooseColor'");
+
+        throw new UnsupportedOperationException("La scelta colore per l'umano è gestita dal controller.");
     }
+    
 
     //Questo metodo funziona solo per la versione CLI
     /* @Override

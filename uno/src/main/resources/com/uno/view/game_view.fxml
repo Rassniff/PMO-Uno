@@ -24,6 +24,7 @@
     <center>
         <VBox alignment="CENTER" spacing="10">
             <Label fx:id="statusText" style="-fx-font-size: 16px;" />
+            <Label fx:id="colorLabel" style="-fx-font-size: 16px;"/>
         </VBox>
     </center>
 

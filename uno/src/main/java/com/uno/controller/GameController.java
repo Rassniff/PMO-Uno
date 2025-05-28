@@ -3,6 +3,9 @@ package com.uno.controller;
 import com.uno.model.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
@@ -10,6 +13,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 //import javafx.scene.layout.HBox;
+import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import java.util.List;
 
@@ -20,31 +26,93 @@ public class GameController {
     @FXML private ImageView topCardImage;
     @FXML private Button drawButton;
     @FXML private Label statusText;
+    @FXML private Label colorLabel;
 
     private Game game;
     private Player humanPlayer;
+    private boolean gameEnded = false;
+
 
     public void initializeGame(List<Player> players) {
         game = new Game(players);
+        colorLabel.setText("Colore attuale: " + game.getCurrentColor().name());
         humanPlayer = players.get(0); // supponiamo che il primo sia il giocatore umano        
+        
+        game.addListener(new GameListener() {
+            @Override
+            public void onGameOver(Player winner) {
+                Platform.runLater(() -> {
+                    if(winner.equals(humanPlayer)){
+                        statusText.setText("Hai vinto!");
+                    } else {
+                        statusText.setText(winner.getName() + " ha vinto!");
+                    }
+                    drawButton.setDisable(true);
+                    gameEnded = true;
+                });
+            }
+            @Override
+            public void onTurnChanged(Player currentPlayer) {
+                Platform.runLater(() -> {
+                    if (currentPlayer.isBot()) {
+                        statusText.setText("Turno di " + currentPlayer.getName() + "...");
+                    } else {
+                        statusText.setText("Tocca a te...");
+                    }
+                    updateUI();
+                });
+            }
+            @Override
+            public void onColorChanged(Color newColor) {
+                Platform.runLater(() -> { 
+                    colorLabel.setText("Colore attuale: " + newColor.name());
+                    updateUI();
+                });
+            }
+            @Override
+            public void onDrawPatta() {
+                Platform.runLater(() -> {
+                    statusText.setText("Non ci sono più carte da pescare! La partita è patta.");
+                    drawButton.setDisable(true);
+                    gameEnded = true;
+                });
+            }
+        });
+        
         updateUI();
         startTurnLoop();
     }
 
     private void startTurnLoop() {
-        Player currentPlayer = game.getTurnManager().getCurrentPlayer();
+        if (gameEnded) return;
+        Player currentPlayer = game.getCurrentPlayer();
         
         if (currentPlayer.isBot()) {
             handleBotTurn((BotPlayer) currentPlayer);
         } else {
-            statusText.setText("È il tuo turno!");
-            //drawButton.setDisable(false);
-        }
+        // Aggiungi un piccolo delay per dare feedback visivo
+        drawButton.setDisable(true);
+        //statusText.setText("Tocca a te...");
+        new Thread(() -> {
+            try {
+                Thread.sleep(800); // 0.8 secondi di pausa
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            Platform.runLater(() -> {
+                //drawButton.setDisable(false);
+                // Abilita solo se è ancora il turno dell'umano e la partita non è finita
+                if (game.getCurrentPlayer().equals(humanPlayer) && !gameEnded) {
+                    drawButton.setDisable(false);
+                }
+            });
+        }).start();
+    }
     }
 
     private void handleBotTurn(BotPlayer bot) {
         drawButton.setDisable(true);
-        statusText.setText("Turno di " + bot.getName() + "...");
+        //statusText.setText("Turno di " + bot.getName() + "...");
 
         // Delay per far sembrare che il bot "pensasse"
         new Thread(() -> {
@@ -58,7 +126,7 @@ public class GameController {
                 Card topCard = game.getTopCard();
                 Card playedCard = bot.playTurn(topCard, game.getCurrentColor());
 
-                if (playedCard != null) {
+                /*if (playedCard != null) {
                     game.playCard(playedCard);
                     if (playedCard instanceof SpecialCard specialCard) {
                         game.handleSpecialCardExternally(specialCard, bot);
@@ -70,7 +138,25 @@ public class GameController {
                         }
 
                     }
-                } else {
+                }*/ 
+                if (playedCard != null) {
+                    Color chosenColor = null;
+                    if (playedCard instanceof SpecialCard specialCard &&
+                        (specialCard.getAction() == Action.WILD || specialCard.getAction() == Action.WILD_DRAW_FOUR || specialCard.getAction() == Action.SHUFFLE)) {
+                        chosenColor = bot.chooseColor(); // O un metodo simile per il bot
+                    }
+                    game.playTurn(bot, playedCard, chosenColor);
+                    if (game.isGameOver()) {
+                        updateUI();
+                        return;
+                    }
+                    /* 
+                    if (playedCard instanceof SpecialCard specialCard &&
+                        (specialCard.getAction() == Action.WILD || specialCard.getAction() == Action.WILD_DRAW_FOUR)) {
+                        Color color = game.getCurrentColor();
+                        colorLabel.setText(bot.getName() + " ha scelto il colore " + color.name());
+                    }*/
+                } /*else {
                     Card drawn = game.drawCardFor(bot);
                     if (TurnManager.isPlayable(drawn, topCard, game.getCurrentColor())) {
                         game.playCard(drawn);
@@ -78,15 +164,36 @@ public class GameController {
                             game.handleSpecialCardExternally(specialCard, bot);
                         }
                     }
-                }
+                }*/
+                // ...existing code...
+                else {
+                    Card drawn = game.drawCardFor(bot);
+                    Card topCardAfterDraw = game.getTopCard();
 
-                if (bot.isHandEmpty()) {
-                    statusText.setText(bot.getName() + " ha vinto!");
+                    if (TurnManager.isPlayable(drawn, topCardAfterDraw, game.getCurrentColor())) {
+                        Color chosenColor = null;
+                        if (drawn instanceof SpecialCard specialCard &&
+                            (specialCard.getAction() == Action.WILD || specialCard.getAction() == Action.WILD_DRAW_FOUR || specialCard.getAction() == Action.SHUFFLE)) {
+                            chosenColor = bot.chooseColor();
+                        }
+                        game.playTurn(bot, drawn, chosenColor);
+                        if (game.isGameOver()) {
+                            updateUI();
+                            return;
+                        }
+                    }
+                }
+                // ...existing code...
+
+                /*if (game.isGameOver()) {
+                    Player winner = game.getWinner();
+                    statusText.setText(winner.getName() + " ha vinto!");
                     drawButton.setDisable(true);
                     return;
-                }
+                }*/
 
-                game.getTurnManager().advance();
+                //game.getTurnManager().advance();
+                game.advanceTurn();
                 updateUI();
                 startTurnLoop(); // Prossimo turno
             });
@@ -95,35 +202,47 @@ public class GameController {
 
     @FXML
     private void onDrawCardClicked() {
-        Player currentPlayer = game.getTurnManager().getCurrentPlayer();
+        if(gameEnded) return;
+        Player currentPlayer = game.getCurrentPlayer();
         if (!currentPlayer.equals(humanPlayer)) return;
 
-         // 🔒 Blocco di sicurezza aggiuntivo
+         //Blocco di sicurezza aggiuntivo
         if (game.canCurrentPlayerPlay()) {
             // Opzionale: mostra messaggio che non può pescare se ha carte valide
             statusText.setText("Hai carte giocabili! Non puoi pescare.");
             return;
         }
 
-        Card drawn = game.drawCardFor(humanPlayer);
+        Card drawn = game.drawCardFor(humanPlayer); 
         Card topCard = game.getTopCard();
 
         if (TurnManager.isPlayable(drawn, topCard, game.getCurrentColor())) {
-            playCard(drawn);
+            //playCard(drawn);
+            statusText.setText("Hai pescato una carta giocabile");
+            updateUI();
+            
         } else {
-            //updateUI();
-            game.getTurnManager().advance();
+            updateUI();
+            //game.getTurnManager().advance();
+            game.advanceTurn();
+            if(game.isGameOver()){
+                return;
+            }
             startTurnLoop();
         }
     }
 
-    private void playCard(Card card) {
+    /*private void playCard(Card card) {
+
         humanPlayer.removeCard(card);
         game.playCard(card);
         statusText.setText("Hai giocato: " + card.toString());
 
 
         if (card instanceof SpecialCard specialCard) {
+            if(specialCard.getAction() == Action.WILD || specialCard.getAction() == Action.WILD_DRAW_FOUR){
+                promptColorSelection();
+            }
             game.handleSpecialCardExternally(specialCard, humanPlayer);
         }
 
@@ -138,14 +257,56 @@ public class GameController {
         game.getTurnManager().advance();
         startTurnLoop();
     }
+    */
 
+    private void playCard(Card card) {
+        if (gameEnded) return;
+        //boolean hasWon;
+        if (card instanceof SpecialCard specialCard &&
+            (specialCard.getAction() == Action.WILD || specialCard.getAction() == Action.WILD_DRAW_FOUR || specialCard.getAction() == Action.SHUFFLE)) {
+            Color chosenColor = promptColorSelectionAndWait();
+            game.playTurn(humanPlayer, card, chosenColor);
+        } else {
+            game.playTurn(humanPlayer, card, null);
+        }
+        statusText.setText("Hai giocato: " + card.toString());
+        updateUI();
+        /*if (game.isGameOver()) {
+            Player winner = game.getWinner();
+            statusText.setText(winner.getName() + " ha vinto!");
+            drawButton.setDisable(true);
+            gameEnded = true;
+            return;
+        }*/
+        //game.getTurnManager().advance();
+        if(game.isGameOver()){
+            return; // Il gioco è finito, non avanzare il turno
+        }
+        game.advanceTurn();
+        startTurnLoop();
+    }
+   
     private void updateUI() {
         updateTopCardImage();
         updateHand();
 
         // Disabilita il bottone se il giocatore ha carte giocabili
+        Player currentPlayer = game.getCurrentPlayer();
         boolean canPlay = game.canCurrentPlayerPlay();
-        drawButton.setDisable(canPlay);
+        
+        colorLabel.setText("Colore attuale: " + game.getCurrentColor().name());
+        
+        //drawButton.setDisable(canPlay || gameEnded);
+        
+        // Disabilita il bottone se:
+        // - non è il turno dell'umano
+        // - il giocatore ha carte giocabili
+        // - la partita è finita
+        drawButton.setDisable(
+            !currentPlayer.equals(humanPlayer) ||
+            canPlay ||
+            gameEnded
+        );
     }
 
     private void updateTopCardImage() {
@@ -183,7 +344,7 @@ public class GameController {
 
             boolean playable = TurnManager.isPlayable(card, topCard, currentColor);
 
-            if (playable) {
+            if (playable && !gameEnded) {
                 cardView.setOnMouseClicked(e -> playCard(card));
             } else {
                 cardView.setOpacity(0.4); // visivamente disattivata
@@ -193,4 +354,93 @@ public class GameController {
             playerHandBox.getChildren().add(cardView);
         }
     }
+
+   /* private void promptColorSelection() {
+    Platform.runLater(() -> {
+        Stage dialog = new Stage();
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.setTitle("Scegli un colore");
+
+        Button redButton = new Button("Rosso");
+        Button yellowButton = new Button("Giallo");
+        Button greenButton = new Button("Verde");
+        Button blueButton = new Button("Blu");
+
+        redButton.setOnAction(e -> {
+            game.setCurrentColor(Color.RED);
+            dialog.close();
+            continueGame();
+        });
+
+        yellowButton.setOnAction(e -> {
+            game.setCurrentColor(Color.YELLOW);
+            dialog.close();
+            continueGame();
+        });
+
+        greenButton.setOnAction(e -> {
+            game.setCurrentColor(Color.GREEN);
+            dialog.close();
+            continueGame();
+        });
+
+        blueButton.setOnAction(e -> {
+            game.setCurrentColor(Color.BLUE);
+            dialog.close();
+            continueGame();
+        });
+
+        HBox hbox = new HBox(10, redButton, yellowButton, greenButton, blueButton);
+        hbox.setAlignment(Pos.CENTER);
+        hbox.setPadding(new Insets(20));
+
+        Scene scene = new Scene(hbox);
+        dialog.setScene(scene);
+        dialog.showAndWait();
+    });
 }
+    */
+    
+    private Color promptColorSelectionAndWait() {
+    final Color[] selectedColor = new Color[1];
+
+    Stage dialog = new Stage();
+    dialog.initModality(Modality.APPLICATION_MODAL);
+    dialog.setTitle("Scegli un colore");
+
+    Button redButton = new Button("Rosso");
+    Button yellowButton = new Button("Giallo");
+    Button greenButton = new Button("Verde");
+    Button blueButton = new Button("Blu");
+
+    redButton.setOnAction(e -> { selectedColor[0] = Color.RED; dialog.close(); });
+    yellowButton.setOnAction(e -> { selectedColor[0] = Color.YELLOW; dialog.close(); });
+    greenButton.setOnAction(e -> { selectedColor[0] = Color.GREEN; dialog.close(); });
+    blueButton.setOnAction(e -> { selectedColor[0] = Color.BLUE; dialog.close(); });
+
+    HBox hbox = new HBox(10, redButton, yellowButton, greenButton, blueButton);
+    hbox.setAlignment(Pos.CENTER);
+    hbox.setPadding(new Insets(20));
+
+    Scene scene = new Scene(hbox);
+    dialog.setScene(scene);
+    dialog.showAndWait();
+
+    return selectedColor[0] != null ? selectedColor[0] : Color.RED;
+}
+    
+    /*private void continueGame() {
+    updateUI();
+    if (humanPlayer.isHandEmpty()) {
+        statusText.setText("Hai vinto!");
+        drawButton.setDisable(true);
+        return;
+    }
+
+    game.getTurnManager().advance();
+    startTurnLoop();
+}
+    */
+}
+
+

@@ -1,9 +1,9 @@
-com\uno\model\SpecialCard$1.class
 com\uno\model\BotPlayer.class
 com\uno\model\Game.class
 com\uno\model\PlayedDeck.class
 com\uno\model\TurnManager.class
 com\uno\model\Player.class
+com\uno\model\GameListener.class
 com\uno\App.class
 com\uno\model\Color.class
 com\uno\model\Game$1.class
@@ -12,4 +12,5 @@ com\uno\model\Action.class
 com\uno\model\Card.class
 com\uno\model\CoveredDeck.class
 com\uno\model\SpecialCard.class
+com\uno\controller\GameController$1.class
 com\uno\model\HumanPlayer.class
