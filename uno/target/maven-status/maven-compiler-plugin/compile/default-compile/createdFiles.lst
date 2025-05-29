@@ -1,5 +1,6 @@
 com\uno\model\BotPlayer.class
 com\uno\model\Game.class
+com\uno\controller\StartController.class
 com\uno\model\PlayedDeck.class
 com\uno\model\TurnManager.class
 com\uno\model\Player.class

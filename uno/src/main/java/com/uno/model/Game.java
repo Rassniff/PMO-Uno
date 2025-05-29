@@ -378,6 +378,10 @@ public class Game {
         return turnManager.getCurrentPlayer();
     }
 
+    public List<Player> getPlayers() {
+        return players;
+    }
+    
     public void advanceTurn() {
         turnManager.advance();
         notifyTurnChanged(getCurrentPlayer());

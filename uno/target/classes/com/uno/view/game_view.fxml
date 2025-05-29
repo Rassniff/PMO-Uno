@@ -7,54 +7,49 @@
 
 <BorderPane fx:controller="com.uno.controller.GameController"
             xmlns:fx="http://javafx.com/fxml"
-            prefWidth="800" prefHeight="600">
-    
-    <!-- Parte alta: carta sul tavolo -->
+            prefWidth="700" prefHeight="900"
+            style="-fx-background-color: linear-gradient(to bottom, #f8fafc, #e0e7ef);">
     <top>
-        <HBox alignment="CENTER" spacing="20">
-            <padding>
-                <Insets top="10" right="10" bottom="10" left="10"/>
-            </padding>
-            <Label text="Carta in cima:"/>
-            <ImageView fx:id="topCardImage" fitHeight="120" fitWidth="80"/>
-        </HBox>
+        <VBox>
+            <!-- Bottone Esci in alto a sinistra -->
+            <HBox alignment="TOP_LEFT">
+                <padding>
+                    <Insets left="10" top="10"/>
+                </padding>
+                <Button fx:id="exitButton" text="⟵ Esci" onAction="#onExitClicked"
+                        style="-fx-background-color: #e0e7ef; -fx-text-fill: #d7263d; -fx-font-size: 13px; -fx-background-radius: 16;"/>
+            </HBox>
+            <!-- Disposizione bot -->
+            <HBox fx:id="opponentsBox" alignment="CENTER" spacing="30" style="-fx-padding: 10 0 50 0;"/>
+        </VBox>
     </top>
-
-    <!-- Parte centrale: messaggi -->
     <center>
-        <VBox alignment="CENTER" spacing="10">
-            <Label fx:id="statusText" style="-fx-font-size: 16px;" />
-            <Label fx:id="colorLabel" style="-fx-font-size: 16px;"/>
+        <VBox alignment="CENTER" spacing="15">
+            <HBox alignment="CENTER" spacing="12" BorderPane.alignment="CENTER">
+                    <Label text="Carta in cima:" style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
+                    <ImageView fx:id="topCardImage" fitHeight="80" fitWidth="60"
+                        style="-fx-effect: dropshadow(gaussian, #888, 8, 0.5, 0, 2);"/>
+            </HBox>
+            <Label fx:id="statusText" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #d7263d;"/>
+            <Label fx:id="colorLabel" style="-fx-font-size: 18px; -fx-text-fill: #222;"/>
+            <Button fx:id="restartButton" text="Nuova Partita" visible="false" onAction="#onRestartClicked"
+                    style="-fx-background-color: #d7263d; -fx-text-fill: white; -fx-font-size: 16px; -fx-background-radius: 20;"/>
         </VBox>
     </center>
-
-    <!-- Parte bassa: carte del giocatore + bottone 
     <bottom>
         <VBox spacing="10" alignment="CENTER">
-            <HBox fx:id="playerHandBox" alignment="CENTER" spacing="10">
-                <padding>
-                    <Insets top="10" right="10" bottom="0" left="10"/>
-                </padding>
-            </HBox>
-            <Button fx:id="drawButton" text="Pesca una carta" onAction="#onDrawCardClicked"/>
+            <Label fx:id="playerNameLabel" text="Le tue carte:" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+            <FlowPane fx:id="playerHandBox"
+                      alignment="CENTER"
+                      hgap="15"
+                      vgap="10"
+                      prefWrapLength="0"
+                      VBox.vgrow="ALWAYS"
+                      maxWidth="Infinity"
+                      style="-fx-padding: 10;">
+            </FlowPane>
+            <Button fx:id="drawButton" text="Pesca una carta" onAction="#onDrawCardClicked"
+                    style="-fx-background-color: #1e90ff; -fx-text-fill: white; -fx-font-size: 16px; -fx-background-radius: 20;"/>
         </VBox>
-    </bottom>-->
-    <bottom>
-    <VBox spacing="10" alignment="CENTER">
-        <FlowPane fx:id="playerHandBox"
-                alignment="CENTER"
-                hgap="10"
-                vgap="10"
-                prefWrapLength="0"
-                VBox.vgrow="ALWAYS"
-                maxWidth="Infinity">
-            <padding>
-                <Insets top="10" right="10" bottom="0" left="10"/>
-            </padding>
-        </FlowPane>
-        <Button fx:id="drawButton" text="Pesca una carta" onAction="#onDrawCardClicked"/>
-    </VBox>
     </bottom>
-
-
 </BorderPane>

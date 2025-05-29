@@ -14,19 +14,23 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 //import javafx.scene.layout.HBox;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GameController {
 
     //@FXML private HBox playerHandBox;
     @FXML private FlowPane playerHandBox;
+    @FXML private HBox opponentsBox;
     @FXML private ImageView topCardImage;
     @FXML private Button drawButton;
     @FXML private Label statusText;
     @FXML private Label colorLabel;
+    @FXML private Button restartButton;
 
     private Game game;
     private Player humanPlayer;
@@ -35,6 +39,8 @@ public class GameController {
 
 
     public void initializeGame(List<Player> players) {
+        restartButton.setVisible(false);
+        statusText.setText("");
         game = new Game(players);
         colorLabel.setText("Colore attuale: " + game.getCurrentColor().name());
         humanPlayer = players.get(0); // supponiamo che il primo sia il giocatore umano        
@@ -50,6 +56,7 @@ public class GameController {
                     }
                     drawButton.setDisable(true);
                     gameEnded = true;
+                    restartButton.setVisible(true);
                 });
             }
             @Override
@@ -296,6 +303,7 @@ public class GameController {
     private void updateUI() {
         updateTopCardImage();
         updateHand();
+        updateOpponents();
 
         // Disabilita il bottone se il giocatore ha carte giocabili
         Player currentPlayer = game.getCurrentPlayer();
@@ -362,6 +370,34 @@ public class GameController {
         }
     }
 
+    private void updateOpponents() {
+        opponentsBox.getChildren().clear();
+        List<Player> players = game.getPlayers();
+
+        for (Player p : players) {
+            if (p == humanPlayer) continue;
+            VBox vbox = new VBox(2);
+            vbox.setAlignment(Pos.CENTER);
+
+            // Numero di carte
+            Label numLabel = new Label(String.valueOf(p.getHand().size()));
+            numLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #222; -fx-background-color: rgba(255,255,255,0.7); -fx-padding: 2 8 2 8; -fx-background-radius: 10;");
+
+            // Immagine carta coperta
+            ImageView backView = new ImageView(new Image(getClass().getResourceAsStream("/com/uno/images/cards/card_back.png")));
+            backView.setFitHeight(70);
+            backView.setPreserveRatio(true);
+
+            vbox.getChildren().addAll(numLabel, backView);
+
+            // Nome bot sotto
+            Label nameLabel = new Label(p.getName());
+            nameLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #555;");
+            vbox.getChildren().add(nameLabel);
+
+            opponentsBox.getChildren().add(vbox);
+        }
+}
    /* private void promptColorSelection() {
     Platform.runLater(() -> {
         Stage dialog = new Stage();
@@ -448,6 +484,30 @@ public class GameController {
     return selectedColor[0];
 }
     
+    @FXML
+    private void onRestartClicked() {
+        restartButton.setVisible(false);
+        gameEnded = false;
+        inputLocked = false;
+        
+        // Crea nuovi giocatori (modifica secondo la tua logica di creazione)
+        List<Player> newPlayers = new ArrayList<>();
+        newPlayers.add(new HumanPlayer("Tu")); // Sostituisci con il tuo costruttore
+        newPlayers.add(new BotPlayer("Bot 1"));
+        initializeGame(newPlayers);
+    }
+    @FXML
+    private void onExitClicked() {
+        try {
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/uno/view/start.fxml"));
+            javafx.scene.Parent root = loader.load();
+            Stage stage = (Stage) topCardImage.getScene().getWindow();
+            stage.setScene(new Scene(root));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+}
+
     /*private void continueGame() {
     updateUI();
     if (humanPlayer.isHandEmpty()) {

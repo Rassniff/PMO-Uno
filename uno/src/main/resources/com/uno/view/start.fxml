@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<StackPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="com.uno.controller.StartController">
+    <VBox alignment="CENTER" spacing="20" style="-fx-background-color: linear-gradient(to bottom, #f8fafc, #e0e7ef); -fx-padding: 40;">
+        <!-- Logo -->
+        <ImageView fitHeight="80" fitWidth="80" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="com\uno\images\uno_logo.png"/>
+            </image>
+        </ImageView>
+        <Label text="UNO" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: #d7263d;"/>
+        <Label text="Nuova Partita" style="-fx-font-size: 18px; -fx-text-fill: #222;"/>
+        <GridPane hgap="10" vgap="15" alignment="CENTER">
+            <Label text="Il tuo nome:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+            <TextField fx:id="nameField" promptText="Inserisci il tuo nome" GridPane.rowIndex="0" GridPane.columnIndex="1" prefWidth="180"/>
+            <Label text="Numero di bot:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+            <Spinner fx:id="botSpinner" min="1" max="3" initialValue="1" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+        </GridPane>
+        <Button text="Inizia partita" onAction="#onStartClicked" style="-fx-font-size: 16px; -fx-background-color: #d7263d; -fx-text-fill: white; -fx-padding: 8 24 8 24; -fx-background-radius: 20;"/>
+    </VBox>
+</StackPane>
