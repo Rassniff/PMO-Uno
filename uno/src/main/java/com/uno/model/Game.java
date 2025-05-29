@@ -212,16 +212,16 @@ public class Game {
             int updatedScore = scores.get(winner) + roundPoints;
             scores.put(winner, updatedScore);
             
-            System.out.println("\n🏁 " + winner.getName() + " ha vinto il round e guadagna " + roundPoints + " punti!");
+            System.out.println(winner.getName() + " ha vinto il round e guadagna " + roundPoints + " punti!");
             printScores();
 
             notifyGameOver(winner);
             
             if (updatedScore >= 500) {
-                System.out.println("🎉 " + winner.getName() + " ha raggiunto i 500 punti e vince la partita!");
+                System.out.println(winner.getName() + " ha raggiunto i 500 punti e vince la partita!");
                 // eventualmente potresti voler stoppare il gioco o notificare qualcosa
             } else {
-                resetForNewRound(winner);
+                //resetForNewRound(winner);
                 winner = null; // reset per la prossima partita
             }
             
@@ -384,6 +384,8 @@ public class Game {
         turnManager.advance();
         notifyTurnChanged(getCurrentPlayer());
     }
+
+
     //calcoliamo i punteggi
     private int calculatePoints(Player winner) {
         int total = 0;
@@ -405,7 +407,7 @@ public class Game {
     }
     //printiamo i punteggi da terminale
     private void printScores() {
-        System.out.println("\n📊 Classifica attuale:");
+        System.out.println("Classifica attuale:");
         for (Map.Entry<Player, Integer> entry : scores.entrySet()) {
             System.out.println("- " + entry.getKey().getName() + ": " + entry.getValue() + " punti");
         }
@@ -421,6 +423,7 @@ public class Game {
     }
 }*/
 
+    /* 
     private void resetForNewRound(Player winner) {
         for (Player player : players) {
             player.clearHand();
@@ -447,4 +450,5 @@ public class Game {
         this.turnManager = new TurnManager(players);
         notifyTurnChanged(turnManager.getCurrentPlayer());
     }
+    */
 }
