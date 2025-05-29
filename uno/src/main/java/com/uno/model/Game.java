@@ -35,7 +35,6 @@ public class Game {
     }
 
 
-
     public Game(List<Player> players) {
         this.players = players;
         this.coveredDeck = new CoveredDeck();
@@ -208,6 +207,7 @@ public class Game {
 
         if (player.isHandEmpty()) {
             winner = player; // <-- Qui salvi il vincitore
+            notifyGameOver(winner);
             int roundPoints = calculatePoints(winner);
             int updatedScore = scores.get(winner) + roundPoints;
             scores.put(winner, updatedScore);
@@ -215,15 +215,13 @@ public class Game {
             System.out.println(winner.getName() + " ha vinto il round e guadagna " + roundPoints + " punti!");
             printScores();
 
-            notifyGameOver(winner);
-            
             if (updatedScore >= 500) {
                 System.out.println(winner.getName() + " ha raggiunto i 500 punti e vince la partita!");
                 // eventualmente potresti voler stoppare il gioco o notificare qualcosa
-            } else {
+            } /*else {
                 //resetForNewRound(winner);
                 winner = null; // reset per la prossima partita
-            }
+            }*/
             
             return true;
         }

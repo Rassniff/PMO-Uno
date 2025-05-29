@@ -31,6 +31,7 @@ public class GameController {
     private Game game;
     private Player humanPlayer;
     private boolean gameEnded = false;
+    private boolean inputLocked = false; // Per evitare input multipli
 
 
     public void initializeGame(List<Player> players) {
@@ -103,7 +104,9 @@ public class GameController {
                 //drawButton.setDisable(false);
                 // Abilita solo se è ancora il turno dell'umano e la partita non è finita
                 if (game.getCurrentPlayer().equals(humanPlayer) && !gameEnded) {
+                    inputLocked = false; // Sblocca input
                     drawButton.setDisable(false);
+                    updateUI();
                 }
             });
         }).start();
@@ -260,7 +263,9 @@ public class GameController {
     */
 
     private void playCard(Card card) {
-        if (gameEnded) return;
+        if (gameEnded || inputLocked) return;
+        inputLocked = true; // Blocca ulteriori input fino a che non finisce il turno
+
         //boolean hasWon;
         if (card instanceof SpecialCard specialCard &&
             (specialCard.getAction() == Action.WILD || specialCard.getAction() == Action.WILD_DRAW_FOUR || specialCard.getAction() == Action.SHUFFLE)) {
@@ -280,10 +285,12 @@ public class GameController {
         }*/
         //game.getTurnManager().advance();
         if(game.isGameOver()){
+            //inputLocked = false; // Sblocca input
             return; // Il gioco è finito, non avanzare il turno
         }
         game.advanceTurn();
         startTurnLoop();
+        //inputLocked = false; // Sblocca input dopo che il turno è finito
     }
    
     private void updateUI() {
@@ -344,7 +351,7 @@ public class GameController {
 
             boolean playable = TurnManager.isPlayable(card, topCard, currentColor);
 
-            if (playable && !gameEnded) {
+            if (playable && !gameEnded && !inputLocked) {
                 cardView.setOnMouseClicked(e -> playCard(card));
             } else {
                 cardView.setOpacity(0.4); // visivamente disattivata
@@ -408,6 +415,18 @@ public class GameController {
     dialog.initModality(Modality.APPLICATION_MODAL);
     dialog.setTitle("Scegli un colore");
 
+    // Disabilita la chiusura tramite la X
+    dialog.setOnCloseRequest(event -> {
+        event.consume(); // Previene la chiusura del dialogo
+    });
+
+    // Disabilita la chiusura tramite ESC
+    dialog.addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
+        if (event.getCode() == javafx.scene.input.KeyCode.ESCAPE) {
+            event.consume();
+        }
+    });
+
     Button redButton = new Button("Rosso");
     Button yellowButton = new Button("Giallo");
     Button greenButton = new Button("Verde");
@@ -426,7 +445,7 @@ public class GameController {
     dialog.setScene(scene);
     dialog.showAndWait();
 
-    return selectedColor[0] != null ? selectedColor[0] : Color.RED;
+    return selectedColor[0];
 }
     
     /*private void continueGame() {
