@@ -10,6 +10,7 @@ public class Game {
     private TurnManager turnManager;    // Gestore dei turni
     private Player winner = null;
     private List<GameListener> listeners = new ArrayList<>();
+    private Map<Player, Integer> scores = new HashMap<>(); // Gestore punteggi giocatori
     
     public void addListener(GameListener listener) {
         listeners.add(listener);
@@ -40,6 +41,10 @@ public class Game {
         this.coveredDeck = new CoveredDeck();
         this.playedDeck = new PlayedDeck();
         this.turnManager = new TurnManager(players);
+        //inizializza a 0 i punteggi
+        for (Player player : players) {
+            scores.put(player, 0);
+        }
 
         // Distribuisci 7 carte a ogni giocatore
         for (Player player : players) {
@@ -203,12 +208,26 @@ public class Game {
 
         if (player.isHandEmpty()) {
             winner = player; // <-- Qui salvi il vincitore
-            notifyGameOver(winner);// Notifica gli ascoltatori del vincitore
+            int roundPoints = calculatePoints(winner);
+            int updatedScore = scores.get(winner) + roundPoints;
+            scores.put(winner, updatedScore);
+            
+            System.out.println("\n🏁 " + winner.getName() + " ha vinto il round e guadagna " + roundPoints + " punti!");
+            printScores();
+
+            notifyGameOver(winner);
+            
+            if (updatedScore >= 500) {
+                System.out.println("🎉 " + winner.getName() + " ha raggiunto i 500 punti e vince la partita!");
+                // eventualmente potresti voler stoppare il gioco o notificare qualcosa
+            } else {
+                resetForNewRound(winner);
+                winner = null; // reset per la prossima partita
+            }
+            
             return true;
         }
         return false;
-        // Ritorna true se il giocatore ha vinto
-        //return player.isHandEmpty();
     }
     
     private void handleSpecialCard(SpecialCard card, Player currentPlayer, Color chosenColor) {
@@ -365,5 +384,67 @@ public class Game {
         turnManager.advance();
         notifyTurnChanged(getCurrentPlayer());
     }
+    //calcoliamo i punteggi
+    private int calculatePoints(Player winner) {
+        int total = 0;
+        for (Player player : players) {
+            if (player != winner) {
+                for (Card card : player.getHand()) {
+                    if (card instanceof SpecialCard special) {
+                        switch (special.getAction()) {
+                            case WILD, WILD_DRAW_FOUR, SHUFFLE -> total += 50;
+                            default -> total += 20;
+                        }
+                    } else {
+                        total += card.getNumber();
+                    }
+                }
+            }
+        }
+        return total;
+    }
+    //printiamo i punteggi da terminale
+    private void printScores() {
+        System.out.println("\n📊 Classifica attuale:");
+        for (Map.Entry<Player, Integer> entry : scores.entrySet()) {
+            System.out.println("- " + entry.getKey().getName() + ": " + entry.getValue() + " punti");
+        }
+    }
+    /*
+     * private void saveScoresToFile() {
+    try (PrintWriter out = new PrintWriter("scores.txt")) {
+        for (Map.Entry<Player, Integer> entry : scores.entrySet()) {
+            out.println(entry.getKey().getName() + "," + entry.getValue());
+        }
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}*/
 
+    private void resetForNewRound(Player winner) {
+        for (Player player : players) {
+            player.clearHand();
+        }
+
+        this.coveredDeck = new CoveredDeck();
+        this.playedDeck = new PlayedDeck();
+
+        for (Player player : players) {
+            for (int i = 0; i < 7; i++) {
+                player.drawCard(coveredDeck.drawCard(playedDeck));
+            }
+        }
+
+        Card firstCard = coveredDeck.drawCard(playedDeck);
+        while (firstCard.isWild()) {
+            coveredDeck.addCard(firstCard);
+            coveredDeck.shuffle();
+            firstCard = coveredDeck.drawCard(playedDeck);
+        }
+        playedDeck.addCard(firstCard);
+        currentColor = firstCard.getColor();
+
+        this.turnManager = new TurnManager(players);
+        notifyTurnChanged(turnManager.getCurrentPlayer());
+    }
 }

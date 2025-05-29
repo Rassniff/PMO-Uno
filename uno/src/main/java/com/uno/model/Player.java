@@ -43,6 +43,19 @@ public abstract class Player {
                               !(card instanceof SpecialCard specialCard &&
                                 specialCard.getAction() == Action.WILD_DRAW_FOUR));
     }
+    //Altrimenti la mappa dei punteggi crei più chiavi diverse per lo stesso giocatore.
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Player)) return false;
+        Player p = (Player) o;
+        return name.equals(p.name); // o un ID univoco se lo usi
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name); // o ID
+    }
 
     // Metodi che definiscono se il giocatore è umano o bot
     public abstract Card playTurn(Card topCard, Color currentColor);
