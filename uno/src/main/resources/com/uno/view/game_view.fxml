@@ -32,8 +32,8 @@
             </HBox>
             <Label fx:id="statusText" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #d7263d;"/>
             <Label fx:id="colorLabel" style="-fx-font-size: 18px; -fx-text-fill: #222;"/>
-            <Button fx:id="restartButton" text="Nuova Partita" visible="false" onAction="#onRestartClicked"
-                    style="-fx-background-color: #d7263d; -fx-text-fill: white; -fx-font-size: 16px; -fx-background-radius: 20;"/>
+            <!--<Button fx:id="restartButton" text="Nuova Partita" visible="false" onAction="#onRestartClicked"
+                    style="-fx-background-color: #d7263d; -fx-text-fill: white; -fx-font-size: 16px; -fx-background-radius: 20;"/>-->
         </VBox>
     </center>
     <bottom>

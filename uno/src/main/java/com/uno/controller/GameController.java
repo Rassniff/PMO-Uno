@@ -18,7 +18,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class GameController {
@@ -30,7 +29,7 @@ public class GameController {
     @FXML private Button drawButton;
     @FXML private Label statusText;
     @FXML private Label colorLabel;
-    @FXML private Button restartButton;
+    /*@FXML private Button restartButton;*/
 
     private Game game;
     private Player humanPlayer;
@@ -39,7 +38,7 @@ public class GameController {
 
 
     public void initializeGame(List<Player> players) {
-        restartButton.setVisible(false);
+        //restartButton.setVisible(false);
         statusText.setText("");
         game = new Game(players);
         colorLabel.setText("Colore attuale: " + game.getCurrentColor().name());
@@ -56,7 +55,7 @@ public class GameController {
                     }
                     drawButton.setDisable(true);
                     gameEnded = true;
-                    restartButton.setVisible(true);
+                    //restartButton.setVisible(true);
                 });
             }
             @Override
@@ -484,7 +483,7 @@ public class GameController {
     return selectedColor[0];
 }
     
-    @FXML
+    /*@FXML
     private void onRestartClicked() {
         restartButton.setVisible(false);
         gameEnded = false;
@@ -496,6 +495,7 @@ public class GameController {
         newPlayers.add(new BotPlayer("Bot 1"));
         initializeGame(newPlayers);
     }
+    */
     @FXML
     private void onExitClicked() {
         try {
