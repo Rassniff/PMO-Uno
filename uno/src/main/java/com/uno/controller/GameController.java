@@ -127,8 +127,8 @@ public class GameController {
     }
 
     private void handleBotTurn(BotPlayer bot) {
-        
         drawButton.setDisable(true);
+        
         new Thread(() -> {
             try {
                 Thread.sleep(1500);
@@ -137,56 +137,23 @@ public class GameController {
             }
 
             Platform.runLater(() -> {
-                // --- LOGICA UNO RANDOM: il bot decide se chiamare UNO solo se ha UNA carta all'inizio del turno ---
-                if (bot.getHand().size() == 1 && !bot.isUnoCalled()) {
-                    boolean callUno = new Random().nextDouble() < 0.1; // 10% di probabilità di chiamare UNO
-                    bot.setUnoCalled(callUno);
-                    if (callUno) {
-                        game.notifyUnoCalled(bot);
-                        statusText.setText(bot.getName() + " ha chiamato UNO!");
-                        updateUI();
-                    }
-                    // Se non chiama UNO, la penalità scatterà dopo la giocata
-                }
-
                 Card topCard = game.getTopCard();
                 Card playedCard = bot.playTurn(topCard, game.getCurrentColor());
 
+               
                 if (playedCard != null) {
                     Color chosenColor = null;
                     if (playedCard instanceof SpecialCard specialCard &&
                         (specialCard.getAction() == Action.WILD || specialCard.getAction() == Action.WILD_DRAW_FOUR || specialCard.getAction() == Action.SHUFFLE)) {
-                        chosenColor = bot.chooseColor();
+                        chosenColor = bot.chooseColor(); // O un metodo simile per il bot
                     }
                     game.playTurn(bot, playedCard, chosenColor);
-
-                    // --- Penalità se il bot gioca l'ultima carta senza aver chiamato UNO ---
-                    if (bot.getHand().isEmpty() && !bot.isUnoCalled()) {
-                        game.drawCardFor(bot);
-                        statusText.setText(bot.getName() + " non ha chiamato UNO! Pesca una carta.");
-                        updateUI();
-                        new Thread(() -> {
-                            try {
-                                Thread.sleep(1200);
-                            } catch (InterruptedException e) {
-                                Thread.currentThread().interrupt();
-                            }
-                            Platform.runLater(() -> {
-                                bot.setUnoCalled(false);
-                                game.advanceTurn();
-                                updateUI();
-                                startTurnLoop();
-                            });
-                        }).start();
-                        return;
-                    }
-
                     if (game.isGameOver()) {
                         updateUI();
                         return;
                     }
-                } else {
-                    // Gestione pesca se il bot non può giocare
+                } 
+                else {
                     Card drawn = game.drawCardFor(bot);
                     Card topCardAfterDraw = game.getTopCard();
 
@@ -197,28 +164,6 @@ public class GameController {
                             chosenColor = bot.chooseColor();
                         }
                         game.playTurn(bot, drawn, chosenColor);
-
-                        // Penalità anche qui se il bot resta senza carte e non ha chiamato UNO
-                        if (bot.getHand().isEmpty() && !bot.isUnoCalled()) {
-                            game.drawCardFor(bot);
-                            statusText.setText(bot.getName() + " non ha chiamato UNO! Pesca una carta.");
-                            updateUI();
-                            new Thread(() -> {
-                                try {
-                                    Thread.sleep(1200);
-                                } catch (InterruptedException e) {
-                                    Thread.currentThread().interrupt();
-                                }
-                                Platform.runLater(() -> {
-                                    bot.setUnoCalled(false);
-                                    game.advanceTurn();
-                                    updateUI();
-                                    startTurnLoop();
-                                });
-                            }).start();
-                            return;
-                        }
-
                         if (game.isGameOver()) {
                             updateUI();
                             return;
@@ -226,14 +171,44 @@ public class GameController {
                     }
                 }
 
-                bot.setUnoCalled(false); // reset flag UNO per il prossimo turno
-                game.advanceTurn();
-                updateUI();
-                startTurnLoop();
-            });
+                //game.getTurnManager().advance();
+            // --- LOGICA UNO RANDOM ---
+            if (bot.getHand().size() == 1) {
+                boolean callUno = new Random().nextDouble() < 0.1; // 10% di probabilità di chiamare UNO
+                bot.setUnoCalled(callUno);
+                if (callUno) {
+                    game.notifyUnoCalled(bot);
+                    statusText.setText(bot.getName() + " ha chiamato UNO!");
+                } else {
+                    game.drawCardFor(bot);
+                    statusText.setText(bot.getName() + " non ha chiamato UNO! Pesca una carta.");
+                    updateUI(); // Aggiorna subito il numero carte
+                }
+                // Delay per mostrare il messaggio prima di avanzare il turno
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(1200);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                    Platform.runLater(() -> {
+                        bot.setUnoCalled(false);
+                        game.advanceTurn();
+                        updateUI();
+                        startTurnLoop();
+                    });
+                }).start();
+                return;
+            }
+            bot.setUnoCalled(false);
+            // --- FINE LOGICA UNO RANDOM ---
+            game.advanceTurn();
+            updateUI();
+            startTurnLoop();
+        });
         }).start();
     }
-    
+
     @FXML
     private void onDrawCardClicked() {
         if(gameEnded) return;
