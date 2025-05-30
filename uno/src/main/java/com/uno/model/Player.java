@@ -58,6 +58,7 @@ public abstract class Player {
     public int hashCode() {
         return Objects.hash(name); // o ID
     }
+    
     //serve per il bottone uno
     public boolean isUnoCalled() {
         return unoCalled;
