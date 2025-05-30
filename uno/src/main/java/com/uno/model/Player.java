@@ -5,6 +5,8 @@ import java.util.*;
 public abstract class Player {
     protected String name;      // Nome del giocatore
     protected List<Card> hand;  // Mano del giocatore
+    protected boolean unoCalled = false; 
+    
 
     // Costruttore del giocatore
     public Player(String name) {
@@ -55,6 +57,14 @@ public abstract class Player {
     @Override
     public int hashCode() {
         return Objects.hash(name); // o ID
+    }
+    //serve per il bottone uno
+    public boolean isUnoCalled() {
+        return unoCalled;
+    }
+
+    public void setUnoCalled(boolean unoCalled) {
+        this.unoCalled = unoCalled;
     }
 
     // Metodi che definiscono se il giocatore è umano o bot

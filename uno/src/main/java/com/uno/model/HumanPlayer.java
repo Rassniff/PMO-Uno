@@ -44,7 +44,7 @@ public class HumanPlayer extends Player {
                         special.getAction() == Action.WILD_DRAW_FOUR &&
                         !canPlayWildDrawFour(topCard, currentColor)) {
 
-                        System.out.println("⚠️ Non puoi giocare il +4 se hai altre carte valide!");
+                        System.out.println(" Non puoi giocare il +4 se hai altre carte valide!");
                         continue; // torna a chiedere la scelta
                     }
 

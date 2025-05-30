@@ -5,4 +5,5 @@ public interface GameListener {
     void onTurnChanged(Player currentPlayer);
     void onColorChanged(Color newColor);
     void onDrawPatta();
+    void onUnoCalled(Player player);
 }

@@ -27,6 +27,12 @@ public class Game {
             l.onTurnChanged(currentPlayer);
         }
     }
+    
+    public void notifyUnoCalled(Player player) {
+        for (GameListener l : listeners) {
+            l.onUnoCalled(player);
+        }
+    }
 
     private void notifyColorChanged(Color newColor) {
         for (GameListener l : listeners) {

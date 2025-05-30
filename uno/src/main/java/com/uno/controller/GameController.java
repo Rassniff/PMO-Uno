@@ -17,7 +17,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-
+import java.util.Random;
 import java.util.List;
 
 public class GameController {
@@ -29,6 +29,7 @@ public class GameController {
     @FXML private Button drawButton;
     @FXML private Label statusText;
     @FXML private Label colorLabel;
+    @FXML private Button unoButton;
     /*@FXML private Button restartButton;*/
 
     private Game game;
@@ -82,6 +83,12 @@ public class GameController {
                     statusText.setText("Non ci sono più carte da pescare! La partita è patta.");
                     drawButton.setDisable(true);
                     gameEnded = true;
+                });
+            }
+            @Override
+            public void onUnoCalled(Player player) {
+                Platform.runLater(() -> {
+                    statusText.setText(player.getName() + " ha chiamato UNO!");
                 });
             }
         });
@@ -202,7 +209,20 @@ public class GameController {
                 }*/
 
                 //game.getTurnManager().advance();
-                game.advanceTurn();
+             // --- LOGICA UNO RANDOM ---
+                if (bot.getHand().size() == 1) {
+                    boolean callUno = new Random().nextDouble() < 0.1; // 90% di probabilità
+                    bot.setUnoCalled(callUno);
+                    if (callUno) {
+                        game.notifyUnoCalled(bot);
+                    } else {
+                        game.drawCardFor(bot);
+                        statusText.setText(bot.getName() + " non ha chiamato UNO! Pesca una carta.");
+                    }
+                }
+                bot.setUnoCalled(false);
+                // --- FINE LOGICA UNO RANDOM ---
+                game.advanceTurn();                
                 updateUI();
                 startTurnLoop(); // Prossimo turno
             });
@@ -271,7 +291,16 @@ public class GameController {
     private void playCard(Card card) {
         if (gameEnded || inputLocked) return;
         inputLocked = true; // Blocca ulteriori input fino a che non finisce il turno
-
+        
+        
+        if (humanPlayer.getHand().size() == 1 && !humanPlayer.isUnoCalled()) {
+            game.drawCardFor(humanPlayer);
+            statusText.setText("Non hai chiamato UNO! Pesca una carta.");
+            updateUI();
+            inputLocked = false;
+            return;
+        }
+        
         //boolean hasWon;
         if (card instanceof SpecialCard specialCard &&
             (specialCard.getAction() == Action.WILD || specialCard.getAction() == Action.WILD_DRAW_FOUR || specialCard.getAction() == Action.SHUFFLE)) {
@@ -350,7 +379,7 @@ public class GameController {
             cardView.fitWidthProperty().bind(
                 playerHandBox.widthProperty().divide(maxCardsPerRow * spacingCompensation)
             );
-
+            
 
             String imageName = card.getImageName();
             Image image = new Image(getClass().getResourceAsStream("/com/uno/images/cards/" + imageName));
@@ -364,8 +393,15 @@ public class GameController {
                 cardView.setOpacity(0.4); // visivamente disattivata
                 Tooltip.install(cardView, new Tooltip("Non puoi giocare questa carta"));
             }
-
+            
             playerHandBox.getChildren().add(cardView);
+        }
+     // Bottone UNO sempre visibile, abilitato solo se hai 1 carte (sta per restare con una)
+        if (handSize == 1 && !humanPlayer.isUnoCalled()) {
+            unoButton.setDisable(false);
+        } else {
+            unoButton.setDisable(true);
+            humanPlayer.setUnoCalled(false);
         }
     }
 
@@ -520,6 +556,12 @@ public class GameController {
     startTurnLoop();
 }
     */
+    @FXML
+    private void onUnoClicked() {
+        humanPlayer.setUnoCalled(true);
+        unoButton.setDisable(true);
+        game.notifyUnoCalled(humanPlayer);
+    }
 }
 
 
