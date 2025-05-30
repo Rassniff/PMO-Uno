@@ -209,37 +209,40 @@ public class GameController {
                 }*/
 
                 //game.getTurnManager().advance();
-             // --- LOGICA UNO RANDOM ---
-                if (bot.getHand().size() == 1) {
-                    boolean callUno = new Random().nextDouble() < 0.0; // 90% di probabilità
-                    bot.setUnoCalled(callUno);
-                    if (callUno) {
-                        game.notifyUnoCalled(bot);
-                        new Thread(() -> {
-                            try {
-                                Thread.sleep(2000); // 2 secondo
-                            } catch (InterruptedException e) {
-                                Thread.currentThread().interrupt();
-                            }
-                            Platform.runLater(() -> {
-                                bot.setUnoCalled(false);
-                                game.advanceTurn();
-                                updateUI();
-                                startTurnLoop();
-                            });
-                        }).start();
-                        return;
-                    } else {
-                        game.drawCardFor(bot);
-                        statusText.setText(bot.getName() + " non ha chiamato UNO! Pesca una carta.");
-                    }
+            // --- LOGICA UNO RANDOM ---
+            if (bot.getHand().size() == 1) {
+                boolean callUno = new Random().nextDouble() < 0.1; // 10% di probabilità di chiamare UNO
+                bot.setUnoCalled(callUno);
+                if (callUno) {
+                    game.notifyUnoCalled(bot);
+                    statusText.setText(bot.getName() + " ha chiamato UNO!");
+                } else {
+                    game.drawCardFor(bot);
+                    statusText.setText(bot.getName() + " non ha chiamato UNO! Pesca una carta.");
+                    updateUI(); // Aggiorna subito il numero carte
                 }
-                bot.setUnoCalled(false);
-                // --- FINE LOGICA UNO RANDOM ---
-                game.advanceTurn();                
-                updateUI();
-                startTurnLoop(); // Prossimo turno
-            });
+                // Delay per mostrare il messaggio prima di avanzare il turno
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(1200);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                    Platform.runLater(() -> {
+                        bot.setUnoCalled(false);
+                        game.advanceTurn();
+                        updateUI();
+                        startTurnLoop();
+                    });
+                }).start();
+                return;
+            }
+            bot.setUnoCalled(false);
+            // --- FINE LOGICA UNO RANDOM ---
+            game.advanceTurn();
+            updateUI();
+            startTurnLoop();
+        });
         }).start();
     }
 
@@ -412,7 +415,7 @@ public class GameController {
             
             playerHandBox.getChildren().add(cardView);
         }
-     // Bottone UNO sempre visibile, abilitato solo se hai 1 carte (sta per restare con una)
+        //Bottone UNO sempre visibile, abilitato solo se hai 1 carte (sta per restare con una)
         if (handSize == 1 && !humanPlayer.isUnoCalled()) {
             unoButton.setDisable(false);
         } else {
