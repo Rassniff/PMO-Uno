@@ -19,13 +19,14 @@ public class StartController {
     @FXML
     private void onStartClicked() {
         String nome = nameField.getText().trim();
-        if (nome.isEmpty()) nome = "Tu";
+        if (nome.isEmpty()) nome = "Te";
         int numBot = botSpinner.getValue();
 
         List<Player> players = new ArrayList<>();
         players.add(new HumanPlayer(nome));
-        for (int i = 1; i <= numBot; i++) {
-            players.add(new BotPlayer("Bot " + i));
+        String[] botNames = {"Diego", "Andri", "Edo"};
+        for (int i = 0; i < numBot; i++) {
+            players.add(new BotPlayer(botNames[i]));
         }
 
         try {

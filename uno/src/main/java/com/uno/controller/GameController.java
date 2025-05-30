@@ -211,10 +211,24 @@ public class GameController {
                 //game.getTurnManager().advance();
              // --- LOGICA UNO RANDOM ---
                 if (bot.getHand().size() == 1) {
-                    boolean callUno = new Random().nextDouble() < 0.1; // 90% di probabilità
+                    boolean callUno = new Random().nextDouble() < 0.0; // 90% di probabilità
                     bot.setUnoCalled(callUno);
                     if (callUno) {
                         game.notifyUnoCalled(bot);
+                        new Thread(() -> {
+                            try {
+                                Thread.sleep(2000); // 2 secondo
+                            } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
+                            }
+                            Platform.runLater(() -> {
+                                bot.setUnoCalled(false);
+                                game.advanceTurn();
+                                updateUI();
+                                startTurnLoop();
+                            });
+                        }).start();
+                        return;
                     } else {
                         game.drawCardFor(bot);
                         statusText.setText(bot.getName() + " non ha chiamato UNO! Pesca una carta.");
@@ -298,6 +312,8 @@ public class GameController {
             statusText.setText("Non hai chiamato UNO! Pesca una carta.");
             updateUI();
             inputLocked = false;
+            game.advanceTurn();
+            startTurnLoop();
             return;
         }
         
