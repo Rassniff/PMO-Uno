@@ -26,7 +26,7 @@
         </GridPane>
         <HBox spacing="10" alignment="CENTER">
             <Label text="Modalità partita:"/>
-            <RadioButton fx:id="normalModeRadio" text="Normale" toggleGroup="$modeToggleGroup" selected="true"/>
+            <RadioButton fx:id="normalModeRadio" text="Amichevole" toggleGroup="$modeToggleGroup" selected="true"/>
             <RadioButton fx:id="pointsModeRadio" text="A punti" toggleGroup="$modeToggleGroup"/>
         </HBox>
         <Button text="Inizia partita" onAction="#onStartClicked" style="-fx-font-size: 16px; -fx-background-color: #d7263d; -fx-text-fill: white; -fx-padding: 8 24 8 24; -fx-background-radius: 20;"/>

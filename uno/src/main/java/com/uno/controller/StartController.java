@@ -9,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.control.ToggleGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,17 @@ public class StartController {
     @FXML private Spinner<Integer> botSpinner;
     @FXML private RadioButton normalModeRadio;
     @FXML private RadioButton pointsModeRadio;
-
+    @FXML private ToggleGroup modeToggleGroup;
+    
+    @FXML
+    public void initialize() {
+        // Associa manualmente i RadioButton al ToggleGroup per sicurezza
+        modeToggleGroup = new ToggleGroup();
+        normalModeRadio.setToggleGroup(modeToggleGroup);
+        pointsModeRadio.setToggleGroup(modeToggleGroup);
+        normalModeRadio.setSelected(true); // opzionale, per default
+    }
+    
     @FXML
     private void onStartClicked() {
         
