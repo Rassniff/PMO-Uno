@@ -393,6 +393,9 @@ public class Game {
         notifyTurnChanged(getCurrentPlayer());
     }
 
+    public int getScoreForPlayer(Player player) {
+        return scores.getOrDefault(player, 0);
+    }
 
     //calcoliamo i punteggi
     private int calculatePoints(Player winner) {
@@ -420,8 +423,8 @@ public class Game {
             System.out.println("- " + entry.getKey().getName() + ": " + entry.getValue() + " punti");
         }
     }
-    /*
-     * private void saveScoresToFile() {
+    
+    /* private void saveScoresToFile() {
     try (PrintWriter out = new PrintWriter("scores.txt")) {
         for (Map.Entry<Player, Integer> entry : scores.entrySet()) {
             out.println(entry.getKey().getName() + "," + entry.getValue());
@@ -430,9 +433,7 @@ public class Game {
         e.printStackTrace();
     }
 }*/
-
-    /* 
-    private void resetForNewRound(Player winner) {
+    public void resetForNewRound() {
         for (Player player : players) {
             player.clearHand();
         }
@@ -453,10 +454,10 @@ public class Game {
             firstCard = coveredDeck.drawCard(playedDeck);
         }
         playedDeck.addCard(firstCard);
+        winner = null;
         currentColor = firstCard.getColor();
 
         this.turnManager = new TurnManager(players);
         notifyTurnChanged(turnManager.getCurrentPlayer());
     }
-    */
 }

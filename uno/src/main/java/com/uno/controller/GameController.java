@@ -41,10 +41,12 @@ public class GameController {
     private Player humanPlayer;
     private boolean gameEnded = false;
     private boolean inputLocked = false; // Per evitare input multipli
+    private boolean partitaAPunti = false;
 
 
-    public void initializeGame(List<Player> players) {
+    public void initializeGame(List<Player> players, boolean partitaAPunti) {
         //restartButton.setVisible(false);
+        this.partitaAPunti = partitaAPunti;
         statusText.setText("");
         game = new Game(players);
         colorLabel.setText("Colore attuale: " + game.getCurrentColor().name());
@@ -54,13 +56,19 @@ public class GameController {
             @Override
             public void onGameOver(Player winner) {
                 Platform.runLater(() -> {
-                    if(winner.equals(humanPlayer)){
-                        statusText.setText("Hai vinto!");
+                    if(partitaAPunti){
+                        showScorePopup();
                     } else {
-                        statusText.setText(winner.getName() + " ha vinto!");
-                    }
+                        if(winner.equals(humanPlayer)){
+                            statusText.setText("Hai vinto!");
+                        } else {
+                            statusText.setText(winner.getName() + " ha vinto!");
+                        }
                     drawButton.setDisable(true);
                     gameEnded = true;
+                    }
+                    
+                    //showScorePopup();
                     //restartButton.setVisible(true);
                 });
             }
@@ -550,6 +558,54 @@ public class GameController {
         unoButton.setDisable(true);
         game.notifyUnoCalled(humanPlayer);
     }
+
+    private void showScorePopup() {
+    Stage dialog = new Stage();
+    dialog.initModality(Modality.APPLICATION_MODAL);
+    dialog.setTitle("Classifica");
+
+    VBox vbox = new VBox(10);
+    vbox.setAlignment(Pos.CENTER);
+    vbox.setPadding(new Insets(20));
+
+    Label title = new Label("Classifica attuale:");
+    title.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+    vbox.getChildren().add(title);
+
+    final boolean[] partitaFinita = {false};
+    final Player[] vincitore = {null};
+
+    for (Player p : game.getPlayers()) {
+        int score = game.getScoreForPlayer(p);
+        Label scoreLabel = new Label(p.getName() + ": " + score + " punti");
+        vbox.getChildren().add(scoreLabel);
+        if (partitaAPunti && score >= 500) {
+            partitaFinita[0] = true;
+            vincitore[0] = p;
+        }
+    }
+
+    Button continueButton = new Button(partitaFinita[0] ? "Fine partita" : "Continua");
+    vbox.getChildren().add(continueButton);
+
+    continueButton.setOnAction(e -> {
+        dialog.close();
+        if (partitaFinita[0]) {
+            statusText.setText("Partita finita! " + vincitore[0].getName() + " ha vinto la partita!");
+            drawButton.setDisable(true);
+            gameEnded = true;
+        } else {
+            game.resetForNewRound();
+            gameEnded = false;
+            updateUI();
+            startTurnLoop();
+        }
+    });
+
+    Scene scene = new Scene(vbox);
+    dialog.setScene(scene);
+    dialog.showAndWait();
+}
 }
 
 

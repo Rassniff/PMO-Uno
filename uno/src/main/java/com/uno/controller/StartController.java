@@ -2,6 +2,7 @@ package com.uno.controller;
 
 import com.uno.model.*;
 import javafx.fxml.FXML;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
 import javafx.scene.Scene;
@@ -15,9 +16,13 @@ import java.util.List;
 public class StartController {
     @FXML private TextField nameField;
     @FXML private Spinner<Integer> botSpinner;
+    @FXML private RadioButton normalModeRadio;
+    @FXML private RadioButton pointsModeRadio;
 
     @FXML
     private void onStartClicked() {
+        
+        boolean partitaAPunti = pointsModeRadio.isSelected();
         String nome = nameField.getText().trim();
         if (nome.isEmpty()) nome = "Te";
         int numBot = botSpinner.getValue();
@@ -34,7 +39,7 @@ public class StartController {
             Parent root = loader.load();
 
             GameController gameController = loader.getController();
-            gameController.initializeGame(players);
+            gameController.initializeGame(players, partitaAPunti);
 
             Stage stage = (Stage) nameField.getScene().getWindow();
             stage.setScene(new Scene(root));

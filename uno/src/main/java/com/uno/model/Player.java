@@ -68,6 +68,9 @@ public abstract class Player {
         this.unoCalled = unoCalled;
     }
 
+    public void clearHand() {
+        hand.clear();
+    }   
     // Metodi che definiscono se il giocatore è umano o bot
     public abstract Card playTurn(Card topCard, Color currentColor);
 
