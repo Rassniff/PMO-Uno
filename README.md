@@ -25,7 +25,7 @@ PMO-Uno/
 ├── UNO-Gioco/                       # Cartella pronta per la distribuzione
 │   ├── uno-game.jar                 # Eseguibile del gioco
 │   ├── start.bat                    # Script di avvio per Windows
-│   ├── javafx-sdk-XX.X.X/           # JavaFX SDK (lib)
+│   └── javafx-sdk-XX.X.X/           # JavaFX SDK (lib)
 │
 └── README.md                        # Questo file
 ```
