@@ -6,11 +6,12 @@ import java.util.Map;
 
 public class BotPlayer extends Player {
 
+    // Costruttore del giocatore bot
     public BotPlayer(String name) {
         super(name);
     }
 
-    // Metodo per far giocare i bot
+    // Metodo per far giocare il turno del bot
     @Override
     public Card playTurn(Card topCard, Color currentColor) {
         for (Card card : new ArrayList<>(hand)) {
@@ -31,11 +32,13 @@ public class BotPlayer extends Player {
         return null;
     }
     
+    // Metodo per verificare se il bot è un bot
     @Override
     public boolean isBot() {
         return true;
     }
 
+    // Metodo per far scegliere il colore da un bot
     public Color chooseColor() {
         Map<Color, Integer> colorCount = new HashMap<>();
 

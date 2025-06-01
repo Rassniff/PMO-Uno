@@ -15,21 +15,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StartController {
-    @FXML private TextField nameField;
-    @FXML private Spinner<Integer> botSpinner;
-    @FXML private RadioButton normalModeRadio;
-    @FXML private RadioButton pointsModeRadio;
-    @FXML private ToggleGroup modeToggleGroup;
+    @FXML private TextField nameField;         // Campo di testo per il nome del giocatore
+    @FXML private Spinner<Integer> botSpinner; // Spinner per il numero di bot
+    @FXML private RadioButton normalModeRadio; // RadioButton per la modalità normale
+    @FXML private RadioButton pointsModeRadio; // RadioButton per la modalità a punti
+    @FXML private ToggleGroup modeToggleGroup; // Gruppo di toggle per i RadioButton
     
+    // Inizializza il controller, associa i RadioButton al ToggleGroup
     @FXML
     public void initialize() {
-        // Associa manualmente i RadioButton al ToggleGroup per sicurezza
         modeToggleGroup = new ToggleGroup();
         normalModeRadio.setToggleGroup(modeToggleGroup);
         pointsModeRadio.setToggleGroup(modeToggleGroup);
-        normalModeRadio.setSelected(true); // opzionale, per default
+        normalModeRadio.setSelected(true); // Imposta la modalità normale come predefinita
     }
     
+    // Metodo che permette di avviare il gioco quando l'utente clicca sul pulsante "Inizia Partita"
     @FXML
     private void onStartClicked() {
         
@@ -46,9 +47,11 @@ public class StartController {
         }
 
         try {
+            // Carica il file FXML per l'interfaccia di gioco 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/uno/view/game_view.fxml"));
             Parent root = loader.load();
 
+            // Inizializza il controller del gioco con i giocatori e la modalità di gioco
             GameController gameController = loader.getController();
             gameController.initializeGame(players, partitaAPunti);
 

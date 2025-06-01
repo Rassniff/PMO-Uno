@@ -3,9 +3,9 @@ package com.uno.model;
 import java.util.*;
 
 public class PlayedDeck {
-    private Stack<Card> pile;
+    private Stack<Card> pile; // Pila degli scarti (mazzo degli scarti)
 
-    // Costruttore della pila degli scarti
+    // Costruttore della pila degli scarti(mazzo degli scarti)
     public PlayedDeck() {
         pile = new Stack<>();
     }

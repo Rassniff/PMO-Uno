@@ -8,45 +8,19 @@ public class Game {
     private CoveredDeck coveredDeck;    // Mazzo coperto
     private PlayedDeck playedDeck;      // Mazzo scoperto
     private TurnManager turnManager;    // Gestore dei turni
-    private Player winner = null;
-    private List<GameListener> listeners = new ArrayList<>();
-    private Map<Player, Integer> scores = new HashMap<>(); // Gestore punteggi giocatori
+    private Player winner = null;       // Flag per il vincitore del gioco
     
-    public void addListener(GameListener listener) {
-        listeners.add(listener);
-    }
-
-    private void notifyGameOver(Player winner) {
-        for (GameListener l : listeners) {
-            l.onGameOver(winner);
-        }
-    }
-
-    private void notifyTurnChanged(Player currentPlayer) {
-        for (GameListener l : listeners) {
-            l.onTurnChanged(currentPlayer);
-        }
-    }
+    private List<GameListener> listeners = new ArrayList<>(); // Lista di ascoltatori per gli eventi del gioco
+    private Map<Player, Integer> scores = new HashMap<>();   // Gestore punteggi giocatori
     
-    public void notifyUnoCalled(Player player) {
-        for (GameListener l : listeners) {
-            l.onUnoCalled(player);
-        }
-    }
-
-    private void notifyColorChanged(Color newColor) {
-        for (GameListener l : listeners) {
-            l.onColorChanged(newColor);
-        }
-    }
-
-
+    // Costruttore del gioco che inizializza i giocatori, i mazzi e distribuisce le carte
     public Game(List<Player> players) {
         this.players = players;
         this.coveredDeck = new CoveredDeck();
         this.playedDeck = new PlayedDeck();
         this.turnManager = new TurnManager(players);
-        //inizializza a 0 i punteggi
+        
+        // Inizializza a 0 i punteggi
         for (Player player : players) {
             scores.put(player, 0);
         }
@@ -69,125 +43,36 @@ public class Game {
         currentColor = firstCard.getColor();
     }
 
-    /*private void handleSpecialCard(SpecialCard card, Player currentPlayer) {
-        switch (card.getAction()) {
-            case REVERSE -> {
-                turnManager.reverseDirection();
-                System.out.println("Direzione invertita!");
-            }
-    
-            case SKIP -> {
-                turnManager.advance();
-                System.out.println("Salto del turno!");
-            }
-    
-            case DRAW_TWO -> {
-                turnManager.advance();
-                Player next = turnManager.getCurrentPlayer();
-                System.out.println(next.getName() + " pesca 2 carte.");
-                next.drawCard(coveredDeck.drawCard(playedDeck));
-                next.drawCard(coveredDeck.drawCard(playedDeck));
-            }
-    
-            case WILD_DRAW_FOUR -> {
-                currentColor = currentPlayer.chooseColor();
-                turnManager.advance();
-                Player next = turnManager.getCurrentPlayer();
-                System.out.println(next.getName() + " pesca 4 carte.");
-                for (int i = 0; i < 4; i++) {
-                    next.drawCard(coveredDeck.drawCard(playedDeck));
-                }
-            }
-    
-            case WILD -> {
-                currentColor = currentPlayer.chooseColor();
-            }
-    
-            case SHUFFLE -> {
-                System.out.println("Carta SHUFFLE giocata! Tutte le mani vengono mischiate.");
-    
-                List<Card> allCards = new ArrayList<>();
-                Map<Player, Integer> cardCountPerPlayer = new HashMap<>();
-    
-                for (Player p : players) {
-                    int count = p.getHand().size();
-                    cardCountPerPlayer.put(p, count);
-                    allCards.addAll(p.getHand());
-                    p.getHand().clear();
-                }
-    
-                Collections.shuffle(allCards);
-                Iterator<Card> iterator = allCards.iterator();
-                for (Player p : players) {
-                    int cardsToGive = cardCountPerPlayer.get(p);
-                    for (int i = 0; i < cardsToGive && iterator.hasNext(); i++) {
-                        p.drawCard(iterator.next());
-                    }
-                }
-    
-                currentColor = currentPlayer.chooseColor();
-            }
+    // Metodo per aggiungere gli ascoltatori al gioco
+    public void addListener(GameListener listener) {
+        listeners.add(listener);
+    }
+    // Metodo che notifica gli ascoltatori quando il gioco finisce
+    private void notifyGameOver(Player winner) {
+        for (GameListener l : listeners) {
+            l.onGameOver(winner);
         }
-    } */
-
-    /*public void playGame() {
-        while (true) {
-            Player currentPlayer = turnManager.getCurrentPlayer();
-            Card topCard = playedDeck.getLastCard();
-
-            System.out.println("\nCarta sul tavolo: " + topCard + " (Colore attuale: " + currentColor + ")");
-            System.out.println(currentPlayer.getName() + " ha in mano: " + currentPlayer.getHand());
-
-            Card chosenCard = currentPlayer.playTurn(topCard, currentColor);
-
-            if (chosenCard != null) {
-                currentPlayer.removeCard(chosenCard);
-                playedDeck.addCard(chosenCard);
-
-                System.out.println(currentPlayer.getName() + " ha giocato: " + chosenCard);
-
-                if (currentPlayer.isHandEmpty()) {
-                    System.out.println(currentPlayer.getName() + " ha vinto!");
-                    break;
-                }
-
-                // gestione base delle carte speciali 
-                if (chosenCard instanceof SpecialCard specialCard) {
-                    handleSpecialCard(specialCard, currentPlayer);
-                }
-            } else {
-                // pesca una carta
-                Card drawn = coveredDeck.drawCard(playedDeck);
-                System.out.println(currentPlayer.getName() + " pesca: " + drawn);
-
-                // Verifica se può essere giocata subito
-                if (TurnManager.isPlayable(drawn, topCard, currentColor)) {
-                    System.out.println(currentPlayer.getName() + " gioca la carta appena pescata: " + drawn);
-                    playedDeck.addCard(drawn);
-                    currentColor = (drawn.getColor() == Color.SPECIAL) ? currentPlayer.chooseColor() : drawn.getColor();
-
-                    if (drawn instanceof SpecialCard specialCard) {
-                        handleSpecialCard(specialCard, currentPlayer);
-                    }
-                } else {
-                    currentPlayer.drawCard(drawn); // la tiene in mano
-                }
-            }
-
-            try {
-                Thread.sleep(2000); // Pausa di 2 secondi
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt(); // Ripristina lo stato di interruzione del thread
-                System.out.println("Il thread è stato interrotto.");
-            }
-
-            turnManager.advance();
+    }
+    // Metodo che notifica gli ascoltatori quando il turno cambia
+    private void notifyTurnChanged(Player currentPlayer) {
+        for (GameListener l : listeners) {
+            l.onTurnChanged(currentPlayer);
         }
+    }
+    // Metodo che notifica gli ascoltatori quando un giocatore chiama "Uno"
+    public void notifyUnoCalled(Player player) {
+        for (GameListener l : listeners) {
+            l.onUnoCalled(player);
+        }
+    }
+    // Metodo che notifica gli ascoltatori quando il colore corrente cambia
+    private void notifyColorChanged(Color newColor) {
+        for (GameListener l : listeners) {
+            l.onColorChanged(newColor);
+        }
+    }
 
-        
-
-    }*/
-
+    // Metodo per giocare un turno con una carta specifica e un colore scelto
     public boolean playTurn(Player player, Card card, Color chosenColor) {
         // Rimuovi la carta dalla mano
         player.removeCard(card);
@@ -212,7 +97,7 @@ public class Game {
         }
 
         if (player.isHandEmpty()) {
-            winner = player; // <-- Qui salvi il vincitore
+            winner = player; 
             notifyGameOver(winner);
             int roundPoints = calculatePoints(winner);
             int updatedScore = scores.get(winner) + roundPoints;
@@ -222,18 +107,14 @@ public class Game {
             printScores();
 
             if (updatedScore >= 500) {
-                System.out.println(winner.getName() + " ha raggiunto i 500 punti e vince la partita!");
-                // eventualmente potresti voler stoppare il gioco o notificare qualcosa
-            } /*else {
-                //resetForNewRound(winner);
-                winner = null; // reset per la prossima partita
-            }*/
-            
+                System.out.println(winner.getName() + " ha raggiunto i 500 punti e vince la partita!");   
+            }
             return true;
         }
         return false;
     }
     
+    // Metodo per gestire le carte speciali
     private void handleSpecialCard(SpecialCard card, Player currentPlayer, Color chosenColor) {
         
         if ((card.getAction() == Action.WILD || card.getAction() == Action.WILD_DRAW_FOUR || card.getAction() == Action.SHUFFLE)
@@ -262,10 +143,8 @@ public class Game {
 
         case WILD_DRAW_FOUR -> {
             if (chosenColor != null) {
-                //currentColor = chosenColor;
                 setCurrentColor(chosenColor);
             } else {
-                //currentColor = currentPlayer.chooseColor();
                 setCurrentColor(currentPlayer.chooseColor());
             }
             turnManager.advance();
@@ -278,10 +157,8 @@ public class Game {
 
         case WILD -> {
             if (chosenColor != null) {
-                //currentColor = chosenColor;
                 setCurrentColor(chosenColor);
             } else {
-                //currentColor = currentPlayer.chooseColor();
                 setCurrentColor(currentPlayer.chooseColor());
             }
         }
@@ -309,38 +186,34 @@ public class Game {
             }
 
             if (chosenColor != null) {
-                //currentColor = chosenColor;
                 setCurrentColor(chosenColor);
             } else {
-                //currentColor = currentPlayer.chooseColor();
                 setCurrentColor(currentPlayer.chooseColor());
             }
         }
     }
 }
 
-    //////////////////////////////////////////////implementazione con javafx
+    //Getter per la carta in cima al mazzo degli scarti
     public Card getTopCard() {
         return playedDeck.getLastCard();
     }
 
+    // Getter per il colore corrente
     public Color getCurrentColor(){
         return currentColor;
     }
 
+    // Setter per il colore corrente
     public void setCurrentColor(Color color){
         this.currentColor = color;
         notifyColorChanged(color);
     }
     
-    public void playCard(Card card) {
-        playedDeck.addCard(card);
-        currentColor = card.getColor();
-    }
-    
+    // Metodo per pescare una carta per il giocatore corrente
     public Card drawCardFor(Player player) {
         Card c = coveredDeck.drawCard(playedDeck);
-        //player.drawCard(c);
+        
         if(c != null){
             player.drawCard(c);
         } else{
@@ -351,14 +224,12 @@ public class Game {
         return c;
     }        
 
+    // Getter per ottenere il gestore dei turni
     public TurnManager getTurnManager(){
         return turnManager;
     }
 
-    public void handleSpecialCardExternally(SpecialCard card, Player currentPlayer, Color chosenColor) {
-        handleSpecialCard(card, currentPlayer, chosenColor);
-    }
-
+    // Metodo per verificare se il giocatore corrente può giocare
     public boolean canCurrentPlayerPlay() {
         Player currentPlayer = turnManager.getCurrentPlayer();
         Card topCard = getTopCard();
@@ -372,32 +243,38 @@ public class Game {
         return false;
     }
     
+    // Metodo per verificare se il gioco è finito
     public boolean isGameOver() {
         return winner != null;
     }
 
+    // Getter per ottenere il vincitore del gioco
     public Player getWinner() {
         return winner;
     }
 
+    // Getter per ottenere il giocatore corrente
     public Player getCurrentPlayer() {
         return turnManager.getCurrentPlayer();
     }
 
+    // Getter per ottenere la lista dei giocatori
     public List<Player> getPlayers() {
         return players;
     }
     
+    // Metodo per avanzare il turno al prossimo giocatore
     public void advanceTurn() {
         turnManager.advance();
         notifyTurnChanged(getCurrentPlayer());
     }
 
+    // Getter per ottenere i punteggi dei giocatori
     public int getScoreForPlayer(Player player) {
         return scores.getOrDefault(player, 0);
     }
 
-    //calcoliamo i punteggi
+    // Metodo per calcolare i punti per il vincitore
     private int calculatePoints(Player winner) {
         int total = 0;
         for (Player player : players) {
@@ -416,7 +293,8 @@ public class Game {
         }
         return total;
     }
-    //printiamo i punteggi da terminale
+    
+    // Metodo per stampare la classifica attuale versione CLI
     private void printScores() {
         System.out.println("Classifica attuale:");
         for (Map.Entry<Player, Integer> entry : scores.entrySet()) {
@@ -424,6 +302,7 @@ public class Game {
         }
     }
     
+    // Metodo per salvare i punteggi su file (non implementato)
     /* private void saveScoresToFile() {
     try (PrintWriter out = new PrintWriter("scores.txt")) {
         for (Map.Entry<Player, Integer> entry : scores.entrySet()) {
@@ -432,7 +311,9 @@ public class Game {
     } catch (IOException e) {
         e.printStackTrace();
     }
-}*/
+    }*/
+
+    // Metodo per resettare il gioco per un nuovo round
     public void resetForNewRound() {
         for (Player player : players) {
             player.clearHand();

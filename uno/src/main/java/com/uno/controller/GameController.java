@@ -14,7 +14,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
-//import javafx.scene.layout.HBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -26,34 +25,33 @@ import java.util.List;
 
 public class GameController {
 
-    //@FXML private HBox playerHandBox;
-    @FXML private FlowPane playerHandBox;
-    @FXML private HBox opponentsBox;
-    @FXML private ImageView topCardImage;
-    @FXML private Button drawButton;
-    @FXML private Label statusText;
-    @FXML private Label colorLabel;
-    @FXML private Label unoLabel;
-    
-    @FXML private Button unoButton;
-    /*@FXML private Button restartButton;*/
+    @FXML private FlowPane playerHandBox; // FlowPane per le carte del giocatore
+    @FXML private HBox opponentsBox;      // HBox per le carte degli avversari
+    @FXML private ImageView topCardImage; // ImageView per la carta in cima al mazzo
+    @FXML private Button drawButton;      // Bottone per pescare una carta
+    @FXML private Label statusText;       // Label per lo stato del gioco
+    @FXML private Label colorLabel;       // Label per il colore attuale del mazzo
+    @FXML private Label unoLabel;         // Label per notificare la chiamata di UNO
+    @FXML private Button unoButton;       // Bottone per chiamare UNO
 
-    private Game game;
-    private Player humanPlayer;
-    private boolean gameEnded = false;
-    private boolean inputLocked = false; // Per evitare input multipli
-    private boolean partitaAPunti = false;
+    private Game game;                     // La partita corrente
+    private Player humanPlayer;            // Il giocatore umano
+    private boolean gameEnded = false;     // Flag per indicare se la partita è finita
+    private boolean inputLocked = false;   // Flag per evitare input multipli
+    private boolean partitaAPunti = false; // Flag per modalità partita a punti
 
 
+    // Metodo per inizializzare il controller e la partita
     public void initializeGame(List<Player> players, boolean partitaAPunti) {
-        //restartButton.setVisible(false);
         this.partitaAPunti = partitaAPunti;
         statusText.setText("");
         game = new Game(players);
         colorLabel.setText("Colore attuale: " + game.getCurrentColor().name());
-        humanPlayer = players.get(0); // supponiamo che il primo sia il giocatore umano        
+        humanPlayer = players.get(0); // Assumiamo che il primo giocatore sia l'umano       
         
+        // Aggiungi i listener per gli eventi del gioco
         game.addListener(new GameListener() {
+            // Metodo chiamato quando il gioco è finito
             @Override
             public void onGameOver(Player winner) {
                 Platform.runLater(() -> {
@@ -68,11 +66,9 @@ public class GameController {
                     drawButton.setDisable(true);
                     gameEnded = true;
                     }
-                    
-                    //showScorePopup();
-                    //restartButton.setVisible(true);
                 });
             }
+            // Metodo chiamato quando il turno cambia
             @Override
             public void onTurnChanged(Player currentPlayer) {
                 Platform.runLater(() -> {
@@ -84,6 +80,7 @@ public class GameController {
                     updateUI();
                 });
             }
+            // Metodo chiamato quando una carta viene giocata
             @Override
             public void onColorChanged(Color newColor) {
                 Platform.runLater(() -> { 
@@ -91,6 +88,7 @@ public class GameController {
                     updateUI();
                 });
             }
+            // Metodo chiamato quando il gioco è patta
             @Override
             public void onDrawPatta() {
                 Platform.runLater(() -> {
@@ -99,6 +97,7 @@ public class GameController {
                     gameEnded = true;
                 });
             }
+            // Metodo chiamato quando un giocatore chiama UNO
             @Override
             public void onUnoCalled(Player player) {
                 Platform.runLater(() -> {
@@ -114,6 +113,7 @@ public class GameController {
         startTurnLoop();
     }
 
+    // Metodo per iniziare il loop dei turni
     private void startTurnLoop() {
         if (gameEnded) return;
         Player currentPlayer = game.getCurrentPlayer();
@@ -121,9 +121,7 @@ public class GameController {
         if (currentPlayer.isBot()) {
             handleBotTurn((BotPlayer) currentPlayer);
         } else {
-        // Aggiungi un piccolo delay per dare feedback visivo
         drawButton.setDisable(true);
-        //statusText.setText("Tocca a te...");
         new Thread(() -> {
             try {
                 Thread.sleep(800); // 0.8 secondi di pausa
@@ -131,7 +129,6 @@ public class GameController {
                 Thread.currentThread().interrupt();
             }
             Platform.runLater(() -> {
-                //drawButton.setDisable(false);
                 // Abilita solo se è ancora il turno dell'umano e la partita non è finita
                 if (game.getCurrentPlayer().equals(humanPlayer) && !gameEnded) {
                     inputLocked = false; // Sblocca input
@@ -143,12 +140,13 @@ public class GameController {
     }
     }
 
+    // Metodo per gestire il turno del bot
     private void handleBotTurn(BotPlayer bot) {
         drawButton.setDisable(true);
 
         new Thread(() -> {
             try {
-                Thread.sleep(1500); // Puoi rimuovere se non vuoi nessun delay tra i turni
+                Thread.sleep(1500); // 1.5 secondi di pausa per il bot
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
@@ -164,7 +162,7 @@ public class GameController {
                     
                 }
 
-                //Prova a giocare una carta
+                // Prova a giocare una carta
                 Card topCard = game.getTopCard();
                 Card playedCard = bot.playTurn(topCard, game.getCurrentColor());
 
@@ -182,7 +180,7 @@ public class GameController {
                     }
         
                 } else {
-                    //Se non può giocare, pesca una carta
+                    // Se non può giocare, pesca una carta
                     Card drawn = game.drawCardFor(bot);
                     updateUI();
                     if (game.isGameOver()) {
@@ -206,7 +204,7 @@ public class GameController {
                     }
                 }
 
-                //Controllo vittoria
+                // Controllo vittoria
                 if (game.isGameOver()) {
                     updateUI();
                     return;
@@ -220,14 +218,14 @@ public class GameController {
         }).start();
     }
 
-
+    // Metodo per gestire il click sul bottone "Pesca carta"
     @FXML
     private void onDrawCardClicked() {
         if(gameEnded) return;
         Player currentPlayer = game.getCurrentPlayer();
         if (!currentPlayer.equals(humanPlayer)) return;
 
-         //Blocco di sicurezza aggiuntivo
+         // Blocco di sicurezza aggiuntivo
         if (game.canCurrentPlayerPlay()) {
             // Opzionale: mostra messaggio che non può pescare se ha carte valide
             statusText.setText("Hai carte giocabili! Non puoi pescare.");
@@ -238,13 +236,11 @@ public class GameController {
         Card topCard = game.getTopCard();
 
         if (TurnManager.isPlayable(drawn, topCard, game.getCurrentColor())) {
-            //playCard(drawn);
             statusText.setText("Hai pescato una carta giocabile");
             updateUI();
             
         } else {
             updateUI();
-            //game.getTurnManager().advance();
             game.advanceTurn();
             if(game.isGameOver()){
                 return;
@@ -253,33 +249,7 @@ public class GameController {
         }
     }
 
-    /*private void playCard(Card card) {
-
-        humanPlayer.removeCard(card);
-        game.playCard(card);
-        statusText.setText("Hai giocato: " + card.toString());
-
-
-        if (card instanceof SpecialCard specialCard) {
-            if(specialCard.getAction() == Action.WILD || specialCard.getAction() == Action.WILD_DRAW_FOUR){
-                promptColorSelection();
-            }
-            game.handleSpecialCardExternally(specialCard, humanPlayer);
-        }
-
-        updateUI();
-
-        if (humanPlayer.isHandEmpty()) {
-            statusText.setText("Hai vinto!");
-            drawButton.setDisable(true);
-            return;
-        }
-
-        game.getTurnManager().advance();
-        startTurnLoop();
-    }
-    */
-
+    // Metodo per giocare una carta
     private void playCard(Card card) {
         if (gameEnded || inputLocked) return;
         inputLocked = true; // Blocca ulteriori input fino a che non finisce il turno
@@ -298,7 +268,6 @@ public class GameController {
             return;
         }
         
-        //boolean hasWon;
         if (card instanceof SpecialCard specialCard &&
             (specialCard.getAction() == Action.WILD || specialCard.getAction() == Action.WILD_DRAW_FOUR || specialCard.getAction() == Action.SHUFFLE)) {
             Color chosenColor = promptColorSelectionAndWait();
@@ -308,23 +277,15 @@ public class GameController {
         }
         statusText.setText("Hai giocato: " + card.toString());
         updateUI();
-        /*if (game.isGameOver()) {
-            Player winner = game.getWinner();
-            statusText.setText(winner.getName() + " ha vinto!");
-            drawButton.setDisable(true);
-            gameEnded = true;
-            return;
-        }*/
-        //game.getTurnManager().advance();
+        
         if(game.isGameOver()){
-            //inputLocked = false; // Sblocca input
             return; // Il gioco è finito, non avanzare il turno
         }
         game.advanceTurn();
         startTurnLoop();
-        //inputLocked = false; // Sblocca input dopo che il turno è finito
     }
    
+    // Metodo per aggiornare l'interfaccia utente
     private void updateUI() {
         updateTopCardImage();
         updateHand();
@@ -335,9 +296,7 @@ public class GameController {
         boolean canPlay = game.canCurrentPlayerPlay();
         
         colorLabel.setText("Colore attuale: " + game.getCurrentColor().name());
-        
-        //drawButton.setDisable(canPlay || gameEnded);
-        
+         
         // Disabilita il bottone se:
         // - non è il turno dell'umano
         // - il giocatore ha carte giocabili
@@ -349,30 +308,29 @@ public class GameController {
         );
     }
 
+    // Metodo per aggiornare l'immagine della carta in cima al mazzo
     private void updateTopCardImage() {
         Card topCard = game.getTopCard();
-        String imageName = topCard.getImageName(); // assicurati che questo metodo esista
+        String imageName = topCard.getImageName();
         Image image = new Image(getClass().getResourceAsStream("/com/uno/images/cards/" + imageName));
         topCardImage.setImage(image);
     }
 
+    // Metodo per aggiornare la mano del giocatore
     private void updateHand() {
         playerHandBox.getChildren().clear();
         Card topCard = game.getTopCard();
         Color currentColor = game.getCurrentColor();
 
         int handSize = humanPlayer.getHand().size();
-        int maxCardsPerRow = Math.max(7, handSize); // o fissa 7 se preferisci
-        double spacingCompensation = 1.1; // Per compensare gli hgap/vgap
+        int maxCardsPerRow = Math.max(7, handSize);
+        double spacingCompensation = 1.1;
 
         for (Card card : humanPlayer.getHand()) {
             ImageView cardView = new ImageView();
-            //cardView.setFitHeight(120);
-            //cardView.setPreserveRatio(true);
-
+        
             cardView.setPreserveRatio(true);
 
-            // Responsive fitWidth legato al contenitore
             cardView.fitWidthProperty().bind(
                 playerHandBox.widthProperty().divide(maxCardsPerRow * spacingCompensation)
             );
@@ -387,13 +345,13 @@ public class GameController {
             if (playable && !gameEnded && !inputLocked) {
                 cardView.setOnMouseClicked(e -> playCard(card));
             } else {
-                cardView.setOpacity(0.4); // visivamente disattivata
+                cardView.setOpacity(0.4); 
                 Tooltip.install(cardView, new Tooltip("Non puoi giocare questa carta"));
             }
             
             playerHandBox.getChildren().add(cardView);
         }
-        //Bottone UNO sempre visibile, abilitato solo se hai 1 carte (sta per restare con una)
+        //Bottone UNO sempre visibile, abilitato solo se hai 1 carta
         if (handSize == 1 && !humanPlayer.isUnoCalled()) {
             unoButton.setDisable(false);
         } else {
@@ -402,6 +360,7 @@ public class GameController {
         }
     }
 
+    // Metodo per aggiornare la visualizzazione degli avversari
     private void updateOpponents() {
         opponentsBox.getChildren().clear();
         List<Player> players = game.getPlayers();
@@ -429,53 +388,9 @@ public class GameController {
 
             opponentsBox.getChildren().add(vbox);
         }
-}
-   /* private void promptColorSelection() {
-    Platform.runLater(() -> {
-        Stage dialog = new Stage();
-        dialog.initModality(Modality.APPLICATION_MODAL);
-        dialog.setTitle("Scegli un colore");
-
-        Button redButton = new Button("Rosso");
-        Button yellowButton = new Button("Giallo");
-        Button greenButton = new Button("Verde");
-        Button blueButton = new Button("Blu");
-
-        redButton.setOnAction(e -> {
-            game.setCurrentColor(Color.RED);
-            dialog.close();
-            continueGame();
-        });
-
-        yellowButton.setOnAction(e -> {
-            game.setCurrentColor(Color.YELLOW);
-            dialog.close();
-            continueGame();
-        });
-
-        greenButton.setOnAction(e -> {
-            game.setCurrentColor(Color.GREEN);
-            dialog.close();
-            continueGame();
-        });
-
-        blueButton.setOnAction(e -> {
-            game.setCurrentColor(Color.BLUE);
-            dialog.close();
-            continueGame();
-        });
-
-        HBox hbox = new HBox(10, redButton, yellowButton, greenButton, blueButton);
-        hbox.setAlignment(Pos.CENTER);
-        hbox.setPadding(new Insets(20));
-
-        Scene scene = new Scene(hbox);
-        dialog.setScene(scene);
-        dialog.showAndWait();
-    });
-}
-    */
+    }
     
+    // Metodo per selezionare un colore tramite un dialog
     private Color promptColorSelectionAndWait() {
     final Color[] selectedColor = new Color[1];
 
@@ -514,21 +429,9 @@ public class GameController {
     dialog.showAndWait();
 
     return selectedColor[0];
-}
-    
-    /*@FXML
-    private void onRestartClicked() {
-        restartButton.setVisible(false);
-        gameEnded = false;
-        inputLocked = false;
-        
-        // Crea nuovi giocatori (modifica secondo la tua logica di creazione)
-        List<Player> newPlayers = new ArrayList<>();
-        newPlayers.add(new HumanPlayer("Tu")); // Sostituisci con il tuo costruttore
-        newPlayers.add(new BotPlayer("Bot 1"));
-        initializeGame(newPlayers);
     }
-    */
+    
+    // Metodo per uscire dal gioco e tornare alla schermata iniziale
     @FXML
     private void onExitClicked() {
         try {
@@ -539,20 +442,9 @@ public class GameController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-}
-
-    /*private void continueGame() {
-    updateUI();
-    if (humanPlayer.isHandEmpty()) {
-        statusText.setText("Hai vinto!");
-        drawButton.setDisable(true);
-        return;
     }
 
-    game.getTurnManager().advance();
-    startTurnLoop();
-}
-    */
+    // Metodo per chiamare UNO
     @FXML
     private void onUnoClicked() {
         humanPlayer.setUnoCalled(true);
@@ -560,6 +452,7 @@ public class GameController {
         game.notifyUnoCalled(humanPlayer);
     }
 
+    // Metodo per mostrare la classifica al termine della partita
     private void showScorePopup() {
     Stage dialog = new Stage();
     dialog.initModality(Modality.APPLICATION_MODAL);
@@ -606,7 +499,7 @@ public class GameController {
     Scene scene = new Scene(vbox);
     dialog.setScene(scene);
     dialog.showAndWait();
-}
+    }
 }
 
 

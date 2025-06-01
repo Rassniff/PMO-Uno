@@ -2,16 +2,16 @@ package com.uno.model;
 import java.util.*;
 
 public class CoveredDeck {
-    private Stack<Card> cards;
+    private Stack<Card> cards; // Mazzo di carte coperte
 
-    // Costruttore del mazzo
+    // Costruttore del mazzo coperto
     public CoveredDeck() {
         cards = new Stack<>();
         generateDeck();
         shuffle();
     }
 
-    // Genera tutte le carte del mazzo secondo le regole di UNO
+    // Metodo che genera il mazzo di carte secondo le regole di Uno
     private void generateDeck() {
         // Carte numerate: 0 (1 per colore), 1-9 (2 per colore)
         for (Color color : Color.values()) {
@@ -40,11 +40,11 @@ public class CoveredDeck {
             cards.add(new SpecialCard(Color.SPECIAL, Action.WILD_DRAW_FOUR));
         }
 
-        //  Carta mischiatutto
+        // Carta mischiatutto
         cards.add(new SpecialCard(Color.SPECIAL, Action.SHUFFLE));
     }
 
-    // Metdodo per mischiare il mazzo
+    // Metodo per mischiare il mazzo
     public void shuffle() {
         Collections.shuffle(cards);
     }

@@ -10,12 +10,13 @@
         <!-- Logo -->
         <ImageView fitHeight="80" fitWidth="80" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="com\uno\images\uno_logo.png"/>
+                <Image url="com/uno/images/uno_logo.png"/>
             </image>
         </ImageView>
         <Label text="UNO" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: #d7263d;"/>
         <Label text="Nuova Partita" style="-fx-font-size: 18px; -fx-text-fill: #222;"/>
         <GridPane hgap="10" vgap="15" alignment="CENTER">
+            <!-- Campi per inserire il nome del giocatore e il numero di bot -->
             <Label text="Il tuo nome:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
             <TextField fx:id="nameField" promptText="Inserisci il tuo nome" GridPane.rowIndex="0" GridPane.columnIndex="1" prefWidth="180"/>
             <Label text="Numero di bot:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
@@ -25,10 +26,12 @@
             </HBox>  
         </GridPane>
         <HBox spacing="10" alignment="CENTER">
+            <!-- Scelta modalità di gioco -->
             <Label text="Modalità partita:"/>
             <RadioButton fx:id="normalModeRadio" text="Amichevole" toggleGroup="$modeToggleGroup" selected="true"/>
             <RadioButton fx:id="pointsModeRadio" text="A punti" toggleGroup="$modeToggleGroup"/>
         </HBox>
+        <!-- Bottone per iniziare la partita -->
         <Button text="Inizia partita" onAction="#onStartClicked" style="-fx-font-size: 16px; -fx-background-color: #d7263d; -fx-text-fill: white; -fx-padding: 8 24 8 24; -fx-background-radius: 20;"/>
     </VBox>
 </StackPane>

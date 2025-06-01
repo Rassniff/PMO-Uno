@@ -1,0 +1,8 @@
+com\uno\model\CoveredDeckTest.class
+com\uno\model\HumanPlayerTest.class
+com\uno\model\TurnManagerTest.class
+com\uno\model\CardTest.class
+com\uno\model\BotPlayerTest.class
+com\uno\model\GameTest.class
+com\uno\model\PlayedDeckTest.class
+com\uno\model\SpecialCardTest.class

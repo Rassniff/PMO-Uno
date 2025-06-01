@@ -8,26 +8,18 @@ import javafx.stage.Stage;
 
 public class App extends Application {
 
+    // Punto di ingresso dell'applicazione JavaFX
     @Override
     public void start(Stage primaryStage) throws Exception {
-        //FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/uno/view/game_view.fxml"));
-        //Parent root = loader.load();
+        // Carica il file FXML per l'interfaccia di avvio del gioco
         Parent root = FXMLLoader.load(getClass().getResource("/com/uno/view/start.fxml"));
-        // Ottengo il controller
-        //GameController controller = loader.getController();
-
-        //Player human = new HumanPlayer("Tu");
-        //Player bot1 = new BotPlayer("Bot1");
-        //Player bot2 = new BotPlayer("Bot2");
-        //Player bot3 = new BotPlayer("Bot3");
-        
-        //controller.initializeGame(List.of(human, bot1));
-
+       
         primaryStage.setTitle("UNO Game");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
     }
 
+    // Metodo main per avviare l'applicazione JavaFX
     public static void main(String[] args) {
         launch(args);
     }

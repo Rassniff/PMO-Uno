@@ -5,9 +5,8 @@ import java.util.*;
 public abstract class Player {
     protected String name;      // Nome del giocatore
     protected List<Card> hand;  // Mano del giocatore
-    protected boolean unoCalled = false; 
+    protected boolean unoCalled = false; // Flag per indicare se il giocatore ha chiamato "Uno"
     
-
     // Costruttore del giocatore
     public Player(String name) {
         this.name = name;
@@ -24,11 +23,12 @@ public abstract class Player {
         return hand;
     }
 
-    // Metodi comuni a tutti i giocatori per: pescare, rimuovere e controllare la vittoria
+    // Metodo per aggiungere una carta alla mano del giocatore
     public void drawCard(Card card) {
         hand.add(card);
     }
 
+    // Metodo per rimuovere una carta dalla mano del giocatore
     public void removeCard(Card card) {
         hand.remove(card);
     }
@@ -38,6 +38,7 @@ public abstract class Player {
         return hand.isEmpty();
     }
     
+    // Metodo che verifica se il giocatore può giocare una carta Wild Draw Four
     public boolean canPlayWildDrawFour(Card topCard, Color currentColor) {
         // Se il giocatore ha almeno una carta giocabile (escluso il jolly+4), non può giocare il jolly+4
         return hand.stream()
@@ -45,7 +46,8 @@ public abstract class Player {
                               !(card instanceof SpecialCard specialCard &&
                                 specialCard.getAction() == Action.WILD_DRAW_FOUR));
     }
-    //Altrimenti la mappa dei punteggi crei più chiavi diverse per lo stesso giocatore.
+    
+    // Metodo per confrontare i giocatori
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -53,28 +55,30 @@ public abstract class Player {
         Player p = (Player) o;
         return name.equals(p.name); // o un ID univoco se lo usi
     }
-
+    
+    // Metodo per calcolare l'hash del giocatore
     @Override
     public int hashCode() {
         return Objects.hash(name); // o ID
     }
     
-    //serve per il bottone uno
+    // Getter per il flag unoCalled
     public boolean isUnoCalled() {
         return unoCalled;
     }
-
+    
+    // Setter per il flag unoCalled
     public void setUnoCalled(boolean unoCalled) {
         this.unoCalled = unoCalled;
     }
-
+    
+    // Metodo che pulisce la mano del giocatore
     public void clearHand() {
         hand.clear();
-    }   
-    // Metodi che definiscono se il giocatore è umano o bot
+    } 
+    
+    // Metodi astratti che devono essere implementati dalle classi derivate
     public abstract Card playTurn(Card topCard, Color currentColor);
-
     public abstract boolean isBot();
-
     public abstract Color chooseColor();
 }

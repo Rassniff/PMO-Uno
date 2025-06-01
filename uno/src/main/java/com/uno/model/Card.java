@@ -10,19 +10,14 @@ public class Card {
         this.number = number;
     }
 
-    // Getter per colore e numero
+    // Getter per il colore 
     public Color getColor() {
         return color;
     }
 
+    // Getter per il numero
     public int getNumber() {
         return number;
-    }
-
-    // Metodo per stampare i dettagli della carta
-    @Override
-    public String toString() {
-        return color.name() + " " + number;
     }
 
     // Controllo di carta speciale
@@ -30,6 +25,7 @@ public class Card {
         return color == Color.SPECIAL;
     }
 
+    // Metodo per ottenere il nome dell'immagine della carta
     public String getImageName() {
        return color.name().toLowerCase() + "_" + number + ".png";
     }
@@ -53,5 +49,11 @@ public class Card {
 
         // Altrimenti, non giocabile
         return false;
+    }
+
+    // Metodo per stampare i dettagli della carta
+    @Override
+    public String toString() {
+        return color.name() + " " + number;
     }
 }
