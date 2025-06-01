@@ -26,7 +26,6 @@ PMO-Uno/
 │   ├── uno-game.jar                 # Eseguibile del gioco
 │   ├── start.bat                    # Script di avvio per Windows
 │   ├── javafx-sdk-XX.X.X/           # JavaFX SDK (lib)
-│   └── LEGGIMI.txt                  # Istruzioni rapide per l’utente finale
 │
 └── README.md                        # Questo file
 ```
