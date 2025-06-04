@@ -2,7 +2,9 @@ package com.uno.model;
 
 import java.util.List;
 
-public class TurnManager {
+import com.uno.model.interfaces.ITurnManager;
+
+public class TurnManager implements ITurnManager {
     private List<Player> players;       // Lista dei giocatori in partitia
     private int currentPlayerIndex;     // Variabile che tiene traccia del giocatore attuale nella lista
     private boolean isClockwise = true; // Variabile che serve a determinare la direzione del gioco
@@ -14,21 +16,25 @@ public class TurnManager {
     }
 
     // Getter per ottenere il giocatore corrente
+    @Override
     public Player getCurrentPlayer() {
         return players.get(currentPlayerIndex);
     }
 
     // Metodo che permette l'inversione del senso di gioco
+    @Override
     public void reverseDirection() {
         isClockwise = !isClockwise;
     }
 
     //Metodo che permette di saltare il prossimo giocatore
+    @Override
     public void skipNextPlayer() {
         advance(); // salta uno
     }
 
     // Metodo che avanza al prossimo giocatore, tenendo conto della direzione del gioco
+    @Override
     public void advance() {
         if (isClockwise) {
             currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
@@ -38,6 +44,7 @@ public class TurnManager {
     }
 
     // Metodo che guarda il prossimo giocatore senza avanzare
+    @Override
     public Player peekNextPlayer() {
         int nextIndex = isClockwise
                 ? (currentPlayerIndex + 1) % players.size()
@@ -46,6 +53,7 @@ public class TurnManager {
     }
 
     //Getter della lista dei giocatori
+    @Override
     public List<Player> getPlayers() {
         return players;
     }

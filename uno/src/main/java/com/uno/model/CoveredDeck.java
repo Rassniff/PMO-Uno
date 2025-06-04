@@ -1,7 +1,9 @@
 package com.uno.model;
 import java.util.*;
 
-public class CoveredDeck {
+import com.uno.model.interfaces.IDeck;
+
+public class CoveredDeck implements IDeck{
     private Stack<Card> cards; // Mazzo di carte coperte
 
     // Costruttore del mazzo coperto
@@ -79,11 +81,13 @@ public class CoveredDeck {
     }
 
     // Metodo per controllare il numero di carte nel mazzo
+    @Override
     public int size() {
         return cards.size();
     }
 
     // Metodo per aggiungere una carta al mazzo
+    @Override
     public void addCard(Card card) {
         cards.add(card);
     }

@@ -1,5 +1,6 @@
 C:\Users\andre\Desktop\Esami\PMO\PMO-Uno\uno\src\main\java\com\uno\App.java
 C:\Users\andre\Desktop\Esami\PMO\PMO-Uno\uno\src\main\java\com\uno\controller\GameController.java
+C:\Users\andre\Desktop\Esami\PMO\PMO-Uno\uno\src\main\java\com\uno\controller\interfaces\IGameController.java
 C:\Users\andre\Desktop\Esami\PMO\PMO-Uno\uno\src\main\java\com\uno\controller\StartController.java
 C:\Users\andre\Desktop\Esami\PMO\PMO-Uno\uno\src\main\java\com\uno\model\Action.java
 C:\Users\andre\Desktop\Esami\PMO\PMO-Uno\uno\src\main\java\com\uno\model\BotPlayer.java
@@ -7,8 +8,11 @@ C:\Users\andre\Desktop\Esami\PMO\PMO-Uno\uno\src\main\java\com\uno\model\Card.ja
 C:\Users\andre\Desktop\Esami\PMO\PMO-Uno\uno\src\main\java\com\uno\model\Color.java
 C:\Users\andre\Desktop\Esami\PMO\PMO-Uno\uno\src\main\java\com\uno\model\CoveredDeck.java
 C:\Users\andre\Desktop\Esami\PMO\PMO-Uno\uno\src\main\java\com\uno\model\Game.java
-C:\Users\andre\Desktop\Esami\PMO\PMO-Uno\uno\src\main\java\com\uno\model\GameListener.java
 C:\Users\andre\Desktop\Esami\PMO\PMO-Uno\uno\src\main\java\com\uno\model\HumanPlayer.java
+C:\Users\andre\Desktop\Esami\PMO\PMO-Uno\uno\src\main\java\com\uno\model\interfaces\IDeck.java
+C:\Users\andre\Desktop\Esami\PMO\PMO-Uno\uno\src\main\java\com\uno\model\interfaces\IGameListener.java
+C:\Users\andre\Desktop\Esami\PMO\PMO-Uno\uno\src\main\java\com\uno\model\interfaces\IPlayableCard.java
+C:\Users\andre\Desktop\Esami\PMO\PMO-Uno\uno\src\main\java\com\uno\model\interfaces\ITurnManager.java
 C:\Users\andre\Desktop\Esami\PMO\PMO-Uno\uno\src\main\java\com\uno\model\PlayedDeck.java
 C:\Users\andre\Desktop\Esami\PMO\PMO-Uno\uno\src\main\java\com\uno\model\Player.java
 C:\Users\andre\Desktop\Esami\PMO\PMO-Uno\uno\src\main\java\com\uno\model\SpecialCard.java

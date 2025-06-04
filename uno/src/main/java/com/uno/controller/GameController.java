@@ -1,6 +1,8 @@
 package com.uno.controller;
 
 import com.uno.model.*;
+import com.uno.model.interfaces.IGameListener;
+import com.uno.controller.interfaces.IGameController;
 
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
@@ -23,7 +25,7 @@ import javafx.util.Duration;
 
 import java.util.List;
 
-public class GameController {
+public class GameController implements IGameController {
 
     @FXML private FlowPane playerHandBox; // FlowPane per le carte del giocatore
     @FXML private HBox opponentsBox;      // HBox per le carte degli avversari
@@ -50,7 +52,7 @@ public class GameController {
         humanPlayer = players.get(0); // Assumiamo che il primo giocatore sia l'umano       
         
         // Aggiungi i listener per gli eventi del gioco
-        game.addListener(new GameListener() {
+        game.addListener(new IGameListener() {
             // Metodo chiamato quando il gioco è finito
             @Override
             public void onGameOver(Player winner) {
@@ -220,7 +222,7 @@ public class GameController {
 
     // Metodo per gestire il click sul bottone "Pesca carta"
     @FXML
-    private void onDrawCardClicked() {
+    public void onDrawCardClicked() {
         if(gameEnded) return;
         Player currentPlayer = game.getCurrentPlayer();
         if (!currentPlayer.equals(humanPlayer)) return;
@@ -250,7 +252,7 @@ public class GameController {
     }
 
     // Metodo per giocare una carta
-    private void playCard(Card card) {
+    public void playCard(Card card) {
         if (gameEnded || inputLocked) return;
         inputLocked = true; // Blocca ulteriori input fino a che non finisce il turno
         
@@ -446,7 +448,7 @@ public class GameController {
 
     // Metodo per chiamare UNO
     @FXML
-    private void onUnoClicked() {
+    public void onUnoClicked() {
         humanPlayer.setUnoCalled(true);
         unoButton.setDisable(true);
         game.notifyUnoCalled(humanPlayer);

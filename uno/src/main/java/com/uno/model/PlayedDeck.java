@@ -2,7 +2,9 @@ package com.uno.model;
 
 import java.util.*;
 
-public class PlayedDeck {
+import com.uno.model.interfaces.IDeck;
+
+public class PlayedDeck implements IDeck {
     private Stack<Card> pile; // Pila degli scarti (mazzo degli scarti)
 
     // Costruttore della pila degli scarti(mazzo degli scarti)

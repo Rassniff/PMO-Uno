@@ -2,15 +2,18 @@ package com.uno.model;
 
 import java.util.*;
 
+import com.uno.model.interfaces.IGameListener;
+import com.uno.model.interfaces.ITurnManager;
+
 public class Game {
     private List<Player> players;       // Lista dei giocatori
     private Color currentColor;         // Colore della carta in gioco
     private CoveredDeck coveredDeck;    // Mazzo coperto
     private PlayedDeck playedDeck;      // Mazzo scoperto
-    private TurnManager turnManager;    // Gestore dei turni
+    private ITurnManager turnManager;    // Gestore dei turni
     private Player winner = null;       // Flag per il vincitore del gioco
     
-    private List<GameListener> listeners = new ArrayList<>(); // Lista di ascoltatori per gli eventi del gioco
+    private List<IGameListener> listeners = new ArrayList<>(); // Lista di ascoltatori per gli eventi del gioco
     private Map<Player, Integer> scores = new HashMap<>();   // Gestore punteggi giocatori
     
     // Costruttore del gioco che inizializza i giocatori, i mazzi e distribuisce le carte
@@ -44,30 +47,30 @@ public class Game {
     }
 
     // Metodo per aggiungere gli ascoltatori al gioco
-    public void addListener(GameListener listener) {
+    public void addListener(IGameListener listener) {
         listeners.add(listener);
     }
     // Metodo che notifica gli ascoltatori quando il gioco finisce
     private void notifyGameOver(Player winner) {
-        for (GameListener l : listeners) {
+        for (IGameListener l : listeners) {
             l.onGameOver(winner);
         }
     }
     // Metodo che notifica gli ascoltatori quando il turno cambia
     private void notifyTurnChanged(Player currentPlayer) {
-        for (GameListener l : listeners) {
+        for (IGameListener l : listeners) {
             l.onTurnChanged(currentPlayer);
         }
     }
     // Metodo che notifica gli ascoltatori quando un giocatore chiama "Uno"
     public void notifyUnoCalled(Player player) {
-        for (GameListener l : listeners) {
+        for (IGameListener l : listeners) {
             l.onUnoCalled(player);
         }
     }
     // Metodo che notifica gli ascoltatori quando il colore corrente cambia
     private void notifyColorChanged(Color newColor) {
-        for (GameListener l : listeners) {
+        for (IGameListener l : listeners) {
             l.onColorChanged(newColor);
         }
     }
@@ -217,7 +220,7 @@ public class Game {
         if(c != null){
             player.drawCard(c);
         } else{
-            for (GameListener l : listeners) {
+            for (IGameListener l : listeners) {
                 l.onDrawPatta(); // Notifica che il mazzo è vuoto
             }
         }
@@ -225,7 +228,7 @@ public class Game {
     }        
 
     // Getter per ottenere il gestore dei turni
-    public TurnManager getTurnManager(){
+    public ITurnManager getTurnManager(){
         return turnManager;
     }
 

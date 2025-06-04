@@ -1,6 +1,8 @@
 package com.uno.model;
 
-public class Card {
+import com.uno.model.interfaces.IPlayableCard;
+
+public class Card implements IPlayableCard {
     private Color color;   // Colore della carta
     private int number;    // Numero della carta (0-9)
 

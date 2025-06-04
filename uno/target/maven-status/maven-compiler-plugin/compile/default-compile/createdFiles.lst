@@ -4,7 +4,6 @@ com\uno\controller\StartController.class
 com\uno\model\PlayedDeck.class
 com\uno\model\TurnManager.class
 com\uno\model\Player.class
-com\uno\model\GameListener.class
 com\uno\App.class
 com\uno\model\Color.class
 com\uno\model\Game$1.class
