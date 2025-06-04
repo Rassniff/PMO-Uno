@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.uno.model.interfaces.ITurnManager;
 
-public class TurnManager implements ITurnManager {
+public class TurnManager implements ITurnManager{
     private List<Player> players;       // Lista dei giocatori in partitia
     private int currentPlayerIndex;     // Variabile che tiene traccia del giocatore attuale nella lista
     private boolean isClockwise = true; // Variabile che serve a determinare la direzione del gioco

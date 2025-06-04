@@ -18,14 +18,4 @@ public class CardTest {
         assertEquals(7, card.getNumber());
     }
 
-    @Test
-    public void testIsPlayableOnWithSpecialCard() {
-        Card normal = new Card(Color.RED, 5);
-        SpecialCard skip = new SpecialCard(Color.RED, Action.SKIP);
-        SpecialCard wild = new SpecialCard(Color.SPECIAL, Action.WILD);
-
-        assertTrue(skip.isPlayableOn(normal)); // stesso colore
-        assertTrue(wild.isPlayableOn(normal)); // jolly sempre giocabile
-        assertFalse(skip.isPlayableOn(new Card(Color.BLUE, 5))); // diverso colore e non stesso numero
-    }
 }

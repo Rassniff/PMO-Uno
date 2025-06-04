@@ -1,8 +1,6 @@
 package com.uno.model;
 
-import com.uno.model.interfaces.IPlayableCard;
-
-public class Card implements IPlayableCard {
+public class Card{
     private Color color;   // Colore della carta
     private int number;    // Numero della carta (0-9)
 
@@ -32,26 +30,6 @@ public class Card implements IPlayableCard {
        return color.name().toLowerCase() + "_" + number + ".png";
     }
 
-    // Metodo che verifica se una carta può essere legalmente giocata sopra un'altra (da finire manca lo stesso tipo di SPECIAL CARD) 
-    public boolean isPlayableOn(Card topCard) {
-        // Caso 1: stesso colore
-        if (this.color.equals(topCard.color)) {
-            return true;
-        }
-    
-        // Caso 2: stesso valore
-        if (this.number == topCard.number) {
-            return true;
-        }
-    
-        // Caso 3: carta jolly
-        if (this.color.equals(Color.SPECIAL)) {
-            return true;
-        }
-
-        // Altrimenti, non giocabile
-        return false;
-    }
 
     // Metodo per stampare i dettagli della carta
     @Override
