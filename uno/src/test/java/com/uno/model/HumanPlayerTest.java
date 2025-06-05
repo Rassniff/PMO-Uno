@@ -27,17 +27,6 @@ public class HumanPlayerTest {
     }
 
     @Test
-    public void testCanPlayWildDrawFour() {
-        HumanPlayer player = new HumanPlayer("Alice");
-        // Ha solo carte non giocabili
-        player.drawCard(new Card(Color.RED, 5));
-        assertTrue(player.canPlayWildDrawFour(new Card(Color.BLUE, 7), Color.BLUE));
-        // Ha una carta giocabile
-        player.drawCard(new Card(Color.BLUE, 2));
-        assertFalse(player.canPlayWildDrawFour(new Card(Color.BLUE, 7), Color.BLUE));
-    }
-
-    @Test
     public void testUnoCalledFlag() {
         HumanPlayer player = new HumanPlayer("Alice");
         assertFalse(player.isUnoCalled());

@@ -259,7 +259,8 @@ public class GameController implements IGameController {
         
         if (humanPlayer.getHand().size() == 1 && !humanPlayer.isUnoCalled()) {
             game.drawCardFor(humanPlayer);
-            unoLabel.setText("Non hai chiamato UNO! Pesca una carta.");
+            game.drawCardFor(humanPlayer);
+            unoLabel.setText("Non hai chiamato UNO! Pesca due carte.");
             PauseTransition pause = new PauseTransition(Duration.seconds(2));
             pause.setOnFinished(event -> unoLabel.setText(""));
             pause.play();
@@ -272,8 +273,8 @@ public class GameController implements IGameController {
         
         if (card instanceof SpecialCard specialCard &&
             (specialCard.getAction() == Action.WILD || specialCard.getAction() == Action.WILD_DRAW_FOUR || specialCard.getAction() == Action.SHUFFLE)) {
-            Color chosenColor = promptColorSelectionAndWait();
-            game.playTurn(humanPlayer, card, chosenColor);
+                Color chosenColor = promptColorSelectionAndWait();
+                game.playTurn(humanPlayer, card, chosenColor);
         } else {
             game.playTurn(humanPlayer, card, null);
         }
