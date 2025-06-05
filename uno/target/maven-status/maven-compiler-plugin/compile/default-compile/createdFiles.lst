@@ -4,6 +4,9 @@ com\uno\controller\StartController.class
 com\uno\model\PlayedDeck.class
 com\uno\model\TurnManager.class
 com\uno\model\Player.class
+com\uno\model\interfaces\IDeck.class
+com\uno\model\interfaces\ITurnManager.class
+com\uno\controller\interfaces\IGameController.class
 com\uno\App.class
 com\uno\model\Color.class
 com\uno\model\Game$1.class
@@ -13,4 +16,5 @@ com\uno\model\Card.class
 com\uno\model\CoveredDeck.class
 com\uno\model\SpecialCard.class
 com\uno\controller\GameController$1.class
+com\uno\model\interfaces\IGameListener.class
 com\uno\model\HumanPlayer.class
