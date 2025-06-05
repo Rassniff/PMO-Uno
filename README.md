@@ -55,7 +55,7 @@ PMO-Uno/
   mvn javafx:run
   ```
 
-### **Modalità utente finale (cartella UNO-Gioco)(OS:Windows):**
+### **Modalità utente finale (cartella UNO-Gioco):**
 1. Assicurati di avere Java 17 (o superiore) installato.
 3. Apri la cartella `UNO-Gioco`.
 4. Fai doppio click su `start.bat`  
@@ -66,6 +66,8 @@ PMO-Uno/
    *)
 
 ---
+
+Nota: Questa versione è eseguibile solo su sistema operativo Windows
 
 ## Test
 
