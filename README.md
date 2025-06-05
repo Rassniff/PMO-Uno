@@ -55,10 +55,10 @@ PMO-Uno/
   mvn javafx:run
   ```
 
-### **Modalità utente finale (cartella UNO-Gioco):**
+### **Modalità utente finale (cartella UNO-Gioco)(OS:Windows):**
 1. Assicurati di avere Java 17 (o superiore) installato.
-2. Apri la cartella `UNO-Gioco`.
-3. Fai doppio click su `start.bat`  
+3. Apri la cartella `UNO-Gioco`.
+4. Fai doppio click su `start.bat`  
    *(oppure esegui da terminale:*
    ```
    java --module-path "javafx-sdk-XX.X.X\lib" --add-modules javafx.controls,javafx.fxml -jar uno-game.jar
