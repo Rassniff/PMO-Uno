@@ -64,10 +64,10 @@ PMO-Uno/
    java --module-path "javafx-sdk-XX.X.X\lib" --add-modules javafx.controls,javafx.fxml -jar uno-game.jar
    ```
    *)
-
+   
+Nota: Questa versione è eseguibile solo su sistema operativo Windows
 ---
 
-Nota: Questa versione è eseguibile solo su sistema operativo Windows
 
 ## Test
 
