@@ -17,6 +17,7 @@ public class GameTest {
         }
     }
     
+
     @Test
     public void testCanCurrentPlayerPlay() {
         List<Player> players = Arrays.asList(
@@ -24,14 +25,21 @@ public class GameTest {
             new BotPlayer("Bot1")
         );
         Game game = new Game(players);
-        // Svuota la mano del primo giocatore e aggiungi solo carte non giocabili
+
+        // Imposta manualmente la top card
+        PlayedDeck playedDeck = new PlayedDeck();
+        Card topCard = new Card(Color.RED, 5);
+        playedDeck.addCard(topCard);
+        game.setCurrentColor(Color.RED);
+
         Player current = game.getCurrentPlayer();
         current.clearHand();
+
+        // Carta NON compatibile
         current.drawCard(new Card(Color.GREEN, 1));
-        // Supponiamo che la carta in cima sia rossa
-        game.setCurrentColor(Color.RED);
         assertFalse(game.canCurrentPlayerPlay());
-        // Aggiungi una carta giocabile
+
+        // Carta compatibile
         current.drawCard(new Card(Color.RED, 2));
         assertTrue(game.canCurrentPlayerPlay());
     }
