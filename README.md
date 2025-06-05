@@ -90,9 +90,9 @@ I test coprono la logica del model (Player, Deck, Game, ecc.).
 
 ## Autori
 
-- Nome: *[Andrii Ursu, Diego Chiodi, Edoardo Guardabascio]*
+- Nome: *Andrii Ursu, Diego Chiodi, Edoardo Guardabascio*
 - Corso: Programmazione ad Oggetti
-- Docente: *[Sara Montagna]*
+- Docente: *Sara Montagna*
 
 ---
 
